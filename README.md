@@ -39,7 +39,7 @@ Should any bugs be found, please create an issue. Be sure to include a detailed 
 - [John Breton](https://github.com/john-breton)
 - Justice Odia
 - Deji Sayomi
-- Shoaib Khan
+- [Shoaib Khan](https://github.com/shoaibkhan17)
 
 ## License and Disclaimer
 
