@@ -37,7 +37,7 @@ Should any bugs be found, please create an issue. Be sure to include a detailed 
 ## The Team
 
 - [John Breton](https://github.com/john-breton)
-- Justice Odia
+- [Justice Odia](https://github.com/oyenmwen)
 - Deji Sayomi
 - [Shoaib Khan](https://github.com/shoaibkhan17)
 
