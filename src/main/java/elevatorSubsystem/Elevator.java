@@ -8,7 +8,7 @@ package elevatorSubsystem;
 public class Elevator {
 
 	/**
-	 * Entry point for the application.
+	 * First Iteration.
 	 * 
 	 * @param args The command line arguments.
 	 */
