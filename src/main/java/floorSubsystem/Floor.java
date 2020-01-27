@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * @author 
  * @version Iteration 1 - February 1st, 2020
  */
-public class Floor {
+public class Floor implements Runnable {
 	private ArrayList<FloorSubSystem> floorSubSystems;
 	
 	public Floor() {
@@ -27,6 +27,21 @@ public class Floor {
 		for (FloorSubSystem floorSubSystem: floorSubSystems) {
 			System.out.println(floorSubSystem);
 		}
+	}
+	
+	public void startThread() {
+		Thread thread = new Thread(this);
+		thread.start();
+	}
+	
+	public void notifyScheduler() {
+		// Add code here
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public static void main(String args[]) {
