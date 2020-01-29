@@ -1,5 +1,7 @@
 package elevatorSubsystem;
 
+import floorSubsystem.RequestData;
+
 import java.util.*;
 
 /**
@@ -12,26 +14,26 @@ import java.util.*;
  * @version Iteration 1 - February 1st, 2020
  */
 public class Elevator implements Runnable {
-	private Deque workQueue;
+    private Deque workQueue;
 
-	/**
-	 * Construct a new Elevator
-	 */
-	public Elevator() {
-		workQueue = new ArrayDeque<>();
-	}
+    /**
+     * Construct a new Elevator.
+     */
+    public Elevator() {
+        workQueue = new ArrayDeque<RequestData>();
+    }
 
-	private void checkScheduler() {
+    @Override
+    public String toString() {
+        return "";
+    }
 
-	}
-
-	private void passToScheduler(ArrayList data) {
-
-	}
-
-	@Override
-	public void run() {
-		// TODO: Complete run behaviour for the class.
-	}
+    @Override
+    public void run() {
+        while (true) {
+            // Insert try to retrieve data from scheduler here.
+            // Insert try to pass to scheduler here.
+        }
+    }
 
 }
