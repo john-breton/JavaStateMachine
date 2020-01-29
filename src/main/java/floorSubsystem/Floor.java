@@ -69,6 +69,7 @@ public class Floor implements Runnable {
     public static void main(String args[]) {
         Floor floor = new Floor();
         floor.fetchFloorSubSystems();
+        
         floor.displayAllSubSystems();
     }
 }
