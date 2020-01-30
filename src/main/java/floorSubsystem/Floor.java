@@ -1,6 +1,7 @@
 package floorSubsystem;
 
 import java.util.ArrayList;
+import scheduler.Scheduler;
 
 /**
  * @author
@@ -8,12 +9,14 @@ import java.util.ArrayList;
  */
 public class Floor implements Runnable {
     private ArrayList<RequestData> requestData;
+    private Scheduler scheduler;
 
     /**
      *
      */
-    public Floor() {
+    public Floor(Scheduler scheduler) {
         requestData = new ArrayList<>();
+        this.scheduler = scheduler;
     }
 
     /**
@@ -27,15 +30,15 @@ public class Floor implements Runnable {
     /**
      *
      */
-    public void fetchFloorSubSystems() {
+    public void fetchRequests() {
         Parser parser = new Parser();
-        requestData = parser.getFloorSubSystems();
+        requestData = parser.getRequestFromFile();
     }
 
     /**
      *
      */
-    public void displayAllSubSystems() {
+    public void displayAllRequests() {
         for (RequestData requestData : this.requestData) {
             System.out.println(requestData);
         }
@@ -53,23 +56,20 @@ public class Floor implements Runnable {
      *
      */
     public void notifyScheduler() {
-        // Add code here
-    }
-
-    @Override
-    public void run() {
-        // TODO Auto-generated method stub
+    	try {
+			scheduler.setRequest(requestData.get(0));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     }
 
     /**
-     * Entry point for the application.
-     *
-     * @param args The command-line arguments that are passed when compiling the application.
+     * 
      */
-    public static void main(String args[]) {
-        Floor floor = new Floor();
-        floor.fetchFloorSubSystems();
-        
-        floor.displayAllSubSystems();
+    @Override
+    public void run() {
+    	while(true) {
+    		this.notifyScheduler();
+    	}
     }
 }

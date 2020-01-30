@@ -1,6 +1,7 @@
 package elevatorSubsystem;
 
 import floorSubsystem.RequestData;
+import scheduler.Scheduler;
 
 import java.util.*;
 
@@ -15,24 +16,53 @@ import java.util.*;
  */
 public class Elevator implements Runnable {
     private Deque workQueue;
+    private Scheduler scheduler;
 
     /**
      * Construct a new Elevator.
      */
-    public Elevator() {
+    public Elevator(Scheduler scheduler) {
         workQueue = new ArrayDeque<RequestData>();
+        this.scheduler = scheduler;
     }
 
+    /**
+     * 
+     */
     @Override
     public String toString() {
         return "";
     }
+    
+    /**
+     * 
+     */
+    public void startThread() {
+    	Thread thread = new Thread(this);
+    	thread.start();
+    }
+    
+    /**
+     * 
+     */
+    public void receiveRequests() {
+    	try {
+			if (scheduler.getRequest() != null) {
+				System.out.println("Elevator reached information from Scheduler: " + scheduler.getRequest());
+				System.exit(0);
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    }
 
+    /**
+     * 
+     */
     @Override
     public void run() {
         while (true) {
-            // Insert try to retrieve data from scheduler here.
-            // Insert try to pass to scheduler here.
+        	this.receiveRequests();
         }
     }
 

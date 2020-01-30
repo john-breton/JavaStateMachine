@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Parser {
-    private static final String FLOOR_SUB_SYSTEM_DOC_FILE_PATH = "src/main/java/floorSubSystemDocument.txt";
+    private static final String FLOOR_SUB_SYSTEM_DOC_FILE_PATH = "src/main/java/requestDocument.txt";
 
-    public ArrayList<RequestData> getFloorSubSystems() {
+    public ArrayList<RequestData> getRequestFromFile() {
         ArrayList<RequestData> requestData = new ArrayList<>();
 
         File file = new File(FLOOR_SUB_SYSTEM_DOC_FILE_PATH);
