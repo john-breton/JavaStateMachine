@@ -10,7 +10,7 @@ import floorSubsystem.RequestData;
  * @author
  * @version Iteration 1 - February 1st, 2020
  */
-public class Scheduler {
+public class Scheduler implements Runnable {
 
     private ArrayDeque<RequestData> requestData;
 
@@ -51,6 +51,15 @@ public class Scheduler {
         notifyAll();
         return temp;
     }
+
+	@Override
+	public void run() {
+		while (true) {
+			// This is where the scheduler would actually schedule requests.
+			// But that isn't required for Iteration 1, so instead it does nothing.
+		}
+		
+	}
 
     // NEED TO MAKE THIS INTO A THREAD AS WELL
 }

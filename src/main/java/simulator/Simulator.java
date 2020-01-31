@@ -6,8 +6,8 @@ import scheduler.Scheduler;
 
 /**
  * 
- * @author Shoaib Khan
- *
+ * @author Shoaib Khan, John Breton
+ * @version Iteration 1 - February 1st, 2020
  */
 public class Simulator {
     
@@ -19,10 +19,12 @@ public class Simulator {
     public static void main(String[] args) {
         System.out.println("---> Simulation Started <--- \n");
         Scheduler scheduler = new Scheduler();
-        Thread floor = new Thread(new Floor(scheduler), "Floor");
-        Thread elevator = new Thread(new Elevator(scheduler), "Elevator");
+        Thread floorThread = new Thread(new Floor(scheduler), "Floor");
+        Thread schedulerThread = new Thread(scheduler, "Scheduler");
+        Thread elevatorThread = new Thread(new Elevator(scheduler), "Elevator");
         
-        floor.start();
-        elevator.start();
+        floorThread.start();
+        schedulerThread.start();
+        elevatorThread.start();
     }
 }

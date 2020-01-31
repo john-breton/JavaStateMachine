@@ -16,45 +16,55 @@ import java.util.*;
  * @version Iteration 1 - February 1st, 2020
  */
 public class Elevator implements Runnable {
-    
-    private Deque<RequestData> workQueue;
-    private Scheduler scheduler;
 
-    /**
-     * Construct a new Elevator.
-     */
-    public Elevator(Scheduler scheduler) {
-        workQueue = new ArrayDeque<RequestData>();
-        this.scheduler = scheduler;
-    }
+	private Deque<RequestData> workQueue;
+	private Scheduler scheduler;
+	private RequestData currentRequest;
 
-    /**
-     * 
-     */
-    @Override
-    public String toString() {
-        return "";
-    }
+	/**
+	 * Construct a new Elevator.
+	 */
+	public Elevator(Scheduler scheduler) {
+		workQueue = new ArrayDeque<RequestData>();
+		this.scheduler = scheduler;
+	}
 
-    /**
-     * 
-     */
-    @Override
-    public void run() {
-        while (true) {
-            try {
-            	Thread.sleep(100);
-                workQueue.add(scheduler.getRequest());
-                System.out.println("Elevator received information from Scheduler: " + workQueue.peek().toString());
-                RequestData currentRequest = workQueue.pop();
-                System.out.println("At time " + currentRequest.getTime() + ", the elevator is moving "
-                        + (currentRequest.getIsGoingUp() ? "up" : "down") + " from floor " + currentRequest.getCurrentFloor()
-                        + " to floor " + currentRequest.getDestinationFloor());
-                scheduler.setRequest(currentRequest);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	/**
+	 * Return the current movement of the Elevator, as a String.
+	 * 
+	 * @return The string representation of the movement the Elevator is currently
+	 *         completing.
+	 */
+	@Override
+	public String toString() {
+		return "At time " + currentRequest.getTime() + ", the elevator is moving "
+				+ (currentRequest.getIsGoingUp() ? "up" : "down") + " from floor " + currentRequest.getCurrentFloor()
+				+ " to floor " + currentRequest.getDestinationFloor();
+	}
+
+	/**
+	 * Thread execution routine.
+	 */
+	@Override
+	public void run() {
+		while (true) {
+			try {
+				// Sleep the thread to ensure it does not grab what it just sent to the scheduler.
+				Thread.sleep(100);
+				// Try to add to the Elevator's workQueue, assuming the Scheduler has something for the Elevator to grab.
+				workQueue.add(scheduler.getRequest());
+				// For Iteration 1, we immediately return what we grab from the Scheduler, so we pop the workQueue.
+				currentRequest = workQueue.pop();
+				// Confirmation that data has been received is printed to the console.
+				System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
+				System.out.println(toString());
+				// Try to give what we just grabbed back to the Scheduler so that it can be passed along to the Floor.
+				scheduler.setRequest(currentRequest);
+			} catch (InterruptedException e) {
+				// In future Iterations, we will make use of a log file to track when exceptions occur.
+				e.printStackTrace();
+			}
+		}
+	}
 
 }
