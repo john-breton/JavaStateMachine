@@ -3,11 +3,11 @@ package floorSubsystem;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Scanner;
 
 public class Parser {
+	
     private static final String FLOOR_SUB_SYSTEM_DOC_FILE_PATH = "src/main/java/requestDocument.txt";
 
     public Deque<RequestData> getRequestFromFile() {
@@ -23,7 +23,6 @@ public class Parser {
             scanner.close();
         } catch (FileNotFoundException e) {
             System.out.println("something went wrong");
-            // e.printStackTrace();
             return null;
         }
 

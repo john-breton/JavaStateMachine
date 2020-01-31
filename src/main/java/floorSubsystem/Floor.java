@@ -12,59 +12,55 @@ import scheduler.Scheduler;
  * @version Iteration 1 - February 1st, 2020
  */
 public class Floor implements Runnable {
-    private Deque<RequestData> requestData;
-    private Scheduler scheduler;
 
-    /**
-     *
-     */
-    public Floor(Scheduler scheduler) {
-        requestData = new ArrayDeque<>();
-        this.scheduler = scheduler;
-    }
+	private Deque<RequestData> requestData;
+	private Scheduler scheduler;
 
-    /**
-     *
-     */
-    public void fetchRequests() {
-        Parser parser = new Parser();
-        requestData = parser.getRequestFromFile();
-    }
+	/**
+	 *
+	 */
+	public Floor(Scheduler scheduler) {
+		requestData = new ArrayDeque<>();
+		this.scheduler = scheduler;
+	}
 
-    /**
-     *
-     */
-    public void displayAllRequests() {
-        for (RequestData requestData : this.requestData) {
-            System.out.println(requestData);
-        }
-    }
+	/**
+	 *
+	 */
+	public int fetchRequests() {
+		Parser parser = new Parser();
+		requestData = parser.getRequestFromFile();
+		return requestData.size();
+	}
 
-    /**
-     *
-     */
-    public void notifyScheduler() {
-        try {
-            scheduler.setRequest(requestData.pop());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+	/**
+	 *
+	 */
+	public void displayAllRequests() {
+		for (RequestData requestData : this.requestData) {
+			System.out.println(requestData);
+		}
+	}
 
-    /**
-     * 
-     */
-    @Override
-    public void run() {
-        this.fetchRequests();
-        while (true) {
-            this.notifyScheduler();
-            try {
-                scheduler.setRequest(requestData.pop());
-                scheduler.getRequest();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	/**
+	 * 
+	 */
+	@Override
+	public void run() {
+		int totalRequests = fetchRequests();
+		int dataReceived = 0;
+		while (true) {
+			try {
+				if (dataReceived < totalRequests) {
+					scheduler.setRequest(requestData.pop());
+					Thread.sleep(100);
+					System.out.println("Floor received infromation from Scheduler: " + scheduler.getRequest().toString()
+							+ "\nThat is success #" + ++dataReceived + "/" + totalRequests + "\n");
+				} else 
+					System.exit(0);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

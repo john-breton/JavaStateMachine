@@ -47,8 +47,9 @@ public class Scheduler {
             this.wait();
         }
         
+        RequestData temp = requestData.pop();
         notifyAll();
-        return requestData.pop();
+        return temp;
     }
 
     // NEED TO MAKE THIS INTO A THREAD AS WELL

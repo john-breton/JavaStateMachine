@@ -43,6 +43,7 @@ public class Elevator implements Runnable {
     public void run() {
         while (true) {
             try {
+            	Thread.sleep(100);
                 workQueue.add(scheduler.getRequest());
                 System.out.println("Elevator received information from Scheduler: " + workQueue.peek().toString());
                 RequestData currentRequest = workQueue.pop();
