@@ -1,30 +1,26 @@
 package floorSubsystem;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import scheduler.Scheduler;
 
 /**
+ * 
+ * 
  * @author
  * @version Iteration 1 - February 1st, 2020
  */
 public class Floor implements Runnable {
-    private ArrayList<RequestData> requestData;
+    private Deque<RequestData> requestData;
     private Scheduler scheduler;
 
     /**
      *
      */
     public Floor(Scheduler scheduler) {
-        requestData = new ArrayList<>();
+        requestData = new ArrayDeque<>();
         this.scheduler = scheduler;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public ArrayList<RequestData> getRequestData() {
-        return requestData;
     }
 
     /**
@@ -47,20 +43,12 @@ public class Floor implements Runnable {
     /**
      *
      */
-    public void startThread() {
-        Thread thread = new Thread(this);
-        thread.start();
-    }
-
-    /**
-     *
-     */
     public void notifyScheduler() {
-    	try {
-			scheduler.setRequest(requestData.get(0));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+        try {
+            scheduler.setRequest(requestData.pop());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -68,8 +56,15 @@ public class Floor implements Runnable {
      */
     @Override
     public void run() {
-    	while(true) {
-    		this.notifyScheduler();
-    	}
+        this.fetchRequests();
+        while (true) {
+            this.notifyScheduler();
+            try {
+                scheduler.setRequest(requestData.pop());
+                scheduler.getRequest();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

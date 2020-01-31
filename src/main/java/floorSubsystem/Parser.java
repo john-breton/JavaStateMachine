@@ -2,14 +2,16 @@ package floorSubsystem;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Scanner;
 
 public class Parser {
     private static final String FLOOR_SUB_SYSTEM_DOC_FILE_PATH = "src/main/java/requestDocument.txt";
 
-    public ArrayList<RequestData> getRequestFromFile() {
-        ArrayList<RequestData> requestData = new ArrayList<>();
+    public Deque<RequestData> getRequestFromFile() {
+        ArrayDeque<RequestData> requestData = new ArrayDeque<>();
 
         File file = new File(FLOOR_SUB_SYSTEM_DOC_FILE_PATH);
         Scanner scanner;
