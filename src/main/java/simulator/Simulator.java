@@ -5,7 +5,8 @@ import floorSubsystem.Floor;
 import scheduler.Scheduler;
 
 /**
- * 
+ * The Simulator class is responsible to running the multi-threaded application
+ * It contains the classes Thread, Scheduler, Floor and Elevator
  * @author Shoaib Khan, John Breton
  * @version Iteration 1 - February 1st, 2020
  */
