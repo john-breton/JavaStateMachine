@@ -1,8 +1,6 @@
 package floorSubsystem;
 
 import java.util.ArrayDeque;
-import java.util.Deque;
-
 import scheduler.Scheduler;
 
 /**
@@ -19,9 +17,9 @@ import scheduler.Scheduler;
 public class Floor implements Runnable {
 
 	/**
-	 * Deque to store all the requests
+	 * ArrayDeque to store all the requests
 	 */
-	private Deque<RequestData> requestData;
+	private ArrayDeque<RequestData> requestData;
 	
 	/**
 	 * Scheduler instance to fetch and send requests to the scheduler

@@ -3,7 +3,6 @@ package floorSubsystem;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Scanner;
 
 /**
@@ -21,9 +20,9 @@ public class Parser {
 
     /**
      * Method to read from a file, fetch all the requests and send them back.
-     * @return Deque<RequestData>
+     * @return ArrayDeque<RequestData>
      */
-    public Deque<RequestData> getRequestFromFile() {
+    public ArrayDeque<RequestData> getRequestFromFile() {
     	
     	// Initialize the queue. 
         ArrayDeque<RequestData> requestData = new ArrayDeque<>();
