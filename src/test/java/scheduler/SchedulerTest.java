@@ -9,6 +9,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import elevatorSubsystem.Elevator;
+import floorSubsystem.Floor;
 import floorSubsystem.RequestData;
 
 
@@ -19,7 +21,7 @@ import floorSubsystem.RequestData;
 class SchedulerTest {
 	
 	Scheduler scheduler;
-
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -39,6 +41,10 @@ class SchedulerTest {
 
 	@Test
 	void test() throws InterruptedException {
+		Thread floor = new Thread(new Floor(scheduler));
+		Thread elevator = new Thread(new Elevator(scheduler));
+		floor.start();
+		elevator.start();
 		assertNotNull(scheduler.getRequest());
 		RequestData data = new RequestData();
 		scheduler.setRequest(data);
