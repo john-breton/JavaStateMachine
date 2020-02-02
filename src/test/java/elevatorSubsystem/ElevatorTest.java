@@ -3,7 +3,6 @@
  */
 package elevatorSubsystem;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,51 +14,47 @@ import org.junit.jupiter.api.Test;
 import scheduler.Scheduler;
 
 /**
+ * Tests for the Elevator class.
+ * 
  * @author osayimwense
- *
+ * @version Iteration 1 - February 1st, 2020
  */
 class ElevatorTest {
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	Elevator invalidElevator;
-	Elevator validElevator;
+    /**
+     * @throws java.lang.Exception
+     */
+    Elevator invalidElevator;
+    Elevator validElevator;
 
-	@BeforeEach
-	void setUp() throws Exception {
-		invalidElevator = new Elevator(null);
-		validElevator = new Elevator(new Scheduler());
-	}
+    @BeforeEach
+    void setUp() throws Exception {
+        invalidElevator = new Elevator(null);
+        validElevator = new Elevator(new Scheduler());
+    }
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@AfterEach
-	void tearDown() throws Exception {
-	}
+    /**
+     * @throws java.lang.Exception
+     */
+    @AfterEach
+    void tearDown() throws Exception {
+    }
 
-	@Test
-	void exceptionTesting() {
-		
-		assertThrows(NullPointerException.class, () -> invalidElevator.toString(),
-				"Expected toString() to throw since scheduler is null");
-		
-		assertThrows(NullPointerException.class, () -> invalidElevator.run(),
-				"Expected run() to throw since scheduler is null");
-		
-	}
+    @Test
+    void exceptionTesting() {
 
-	@Test
-	void test() {
-		assertNotNull(invalidElevator);
-		assertNotNull(validElevator);
-//		assertNotNull(validElevator.toString());
-		validElevator.run();
+        assertThrows(NullPointerException.class, () -> invalidElevator.toString(),
+                "Expected toString() to throw since scheduler is null");
 
-//		assertNotNull(validElevator.toString());
+        assertThrows(NullPointerException.class, () -> invalidElevator.run(),
+                "Expected run() to throw since scheduler is null");
 
-		
-	}
+    }
+
+    @Test
+    void constructorTest() {
+        assertNotNull(invalidElevator);
+        assertNotNull(validElevator);
+    }
 
 }
