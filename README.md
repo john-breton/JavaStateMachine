@@ -28,7 +28,17 @@ This GitHub repository is used for the development of a Java based real-time ele
 
 ## Current Class Diagram
 
-- Once a UML diagram has been generated it will be added here.
+<p style="text-align:right">
+<img src="documentation/Iteration 1/UML/UMLClassDiagram.png" alt="Class Diagram">
+</p>
+Date: February 1st, 2020
+
+## Current Sequence Diagram
+
+<p style="text-align:right">
+<img src="documentation/Iteration 1/UML/UMLSequenceDiagram.png" alt="Sequence Diagram">
+</p>
+Date: February 1st, 2020
 
 ## Known issues
 
@@ -38,7 +48,7 @@ Should any bugs be found, please create an issue. Be sure to include a detailed 
 
 - [John Breton](https://github.com/john-breton)
 - [Justice Odia](https://github.com/oyenmwen)
-- Deji Sayomi
+- [Deji Sayomi](https://github.com/dejisayomi)
 - [Shoaib Khan](https://github.com/shoaibkhan17)
 
 ## License and Disclaimer

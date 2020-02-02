@@ -17,54 +17,64 @@ import java.util.*;
  */
 public class Elevator implements Runnable {
 
-	private Deque<RequestData> workQueue;
-	private Scheduler scheduler;
-	private RequestData currentRequest;
+    // The queue used to keep track of the work for the Elevator.
+    private Deque<RequestData> workQueue;
 
-	/**
-	 * Construct a new Elevator.
-	 */
-	public Elevator(Scheduler scheduler) {
-		workQueue = new ArrayDeque<RequestData>();
-		this.scheduler = scheduler;
-	}
+    // A reference to where the Elevator is expecting to receive work from.
+    private Scheduler scheduler;
 
-	/**
-	 * Return the current movement of the Elevator, as a String.
-	 * 
-	 * @return The string representation of the movement the Elevator is currently
-	 *         completing.
-	 */
-	@Override
-	public String toString() {
-		return "At time " + currentRequest.getTime() + ", the elevator is moving "
-				+ (currentRequest.getIsGoingUp() ? "up" : "down") + " from floor " + currentRequest.getCurrentFloor()
-				+ " to floor " + currentRequest.getDestinationFloor();
-	}
+    // The current request the Elevator is handling.
+    private RequestData currentRequest;
 
-	/**
-	 * Thread execution routine.
-	 */
-	@Override
-	public void run() {
-		while (true) {
-			try {
-				// Sleep the thread to ensure it does not grab what it just sent to the scheduler.
-				Thread.sleep(100);
-				// Try to add to the Elevator's workQueue, assuming the Scheduler has something for the Elevator to grab.
-				workQueue.add(scheduler.getRequest());
-				// For Iteration 1, we immediately return what we grab from the Scheduler, so we pop the workQueue.
-				currentRequest = workQueue.pop();
-				// Confirmation that data has been received is printed to the console.
-				System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
-				System.out.println(toString());
-				// Try to give what we just grabbed back to the Scheduler so that it can be passed along to the Floor.
-				scheduler.setRequest(currentRequest);
-			} catch (InterruptedException e) {
-				// In future Iterations, we will make use of a log file to track when exceptions occur.
-				e.printStackTrace();
-			}
-		}
-	}
+    /**
+     * Construct a new Elevator.
+     */
+    public Elevator(Scheduler scheduler) {
+        workQueue = new ArrayDeque<RequestData>();
+        this.scheduler = scheduler;
+    }
+
+    /**
+     * Return the current movement of the Elevator, as a String.
+     * 
+     * @return The string representation of the movement the Elevator is currently
+     *         completing.
+     */
+    @Override
+    public String toString() {
+        return "At time " + currentRequest.getTime() + ", the elevator is moving "
+                + (currentRequest.getIsGoingUp() ? "up" : "down") + " from floor " + currentRequest.getCurrentFloor()
+                + " to floor " + currentRequest.getDestinationFloor();
+    }
+
+    /**
+     * Thread execution routine.
+     */
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                // Sleep the thread to ensure it does not grab what it just sent to the
+                // scheduler (A hack solution for the purposes of Iteration 1).
+                Thread.sleep(100);
+                // Try to add to the Elevator's workQueue, assuming the Scheduler has something
+                // for the Elevator to grab.
+                workQueue.add(scheduler.getRequest());
+                // For Iteration 1, we immediately return what we grab from the Scheduler, so we
+                // pop the workQueue.
+                currentRequest = workQueue.pop();
+                // Confirmation that data has been received is printed to the console.
+                System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
+                System.out.println(toString());
+                // Try to give what we just grabbed back to the Scheduler so that it can be
+                // passed along to the Floor.
+                scheduler.setRequest(currentRequest);
+            } catch (InterruptedException e) {
+                // In future Iterations, we will make use of a log file to track when exceptions
+                // occur.
+                e.printStackTrace();
+            }
+        }
+    }
 
 }

@@ -98,7 +98,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>floorSubsystem.Floor</mainClass>
+                            <mainClass>simulator.Simulator.java</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
