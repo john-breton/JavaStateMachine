@@ -22,7 +22,7 @@ class RequestDataTest {
 	 */
 	@BeforeEach
 	void setUp() throws Exception {
-		requestData = new RequestData();
+		requestData = new RequestData("14:05:15.0",3,true,1);
 		}
 
 	/**
@@ -34,16 +34,16 @@ class RequestDataTest {
 		assertNull(requestData);
 				
 	}
-
+	@Test
+    void constructorTest() {
+        assertNotNull(requestData);
+    }
+	
 	@Test
 	void test() {
-		requestData.setCurrentFloor(3);
 		assertSame(3, requestData.getCurrentFloor());
-		requestData.setDestinationFloor(1);
 		assertSame(1, requestData.getDestinationFloor());
-		requestData.setIsGoingUp(true);
 		assertSame(true, requestData.getIsGoingUp());
-		requestData.setTime("14:05:15.0");
 		assertSame("14:05:15.0", requestData.getTime());
 
 	}
