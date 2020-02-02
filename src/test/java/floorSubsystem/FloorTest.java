@@ -64,6 +64,11 @@ class FloorTest {
 	 */
 	@AfterEach
 	void tearDown() throws Exception {
+		validFloor = null;
+		invalidFloor = null;
+		assertNull(invalidFloor);
+		assertNull(validFloor);
+
 	}
 
 	@Test

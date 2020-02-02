@@ -4,8 +4,6 @@
 package elevatorSubsystem;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterEach;
@@ -37,6 +35,11 @@ class ElevatorTest {
 	 */
 	@AfterEach
 	void tearDown() throws Exception {
+		validElevator = null;
+		invalidElevator = null;
+		assertNull(invalidElevator);
+		assertNull(validElevator);
+
 	}
 
 	@Test
@@ -54,11 +57,6 @@ class ElevatorTest {
 	void test() {
 		assertNotNull(invalidElevator);
 		assertNotNull(validElevator);
-//		assertNotNull(validElevator.toString());
-		validElevator.run();
-
-//		assertNotNull(validElevator.toString());
-
 		
 	}
 
