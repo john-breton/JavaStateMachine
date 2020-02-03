@@ -1,52 +1,96 @@
 package floorSubsystem;
 
-import java.util.ArrayList;
+import java.util.*;
+import scheduler.Scheduler;
 
 /**
+ * The Floor class is one of the three subsystems of the elevator program. The
+ * floor class is responsible for fetching the requests from a document. Then in
+ * a polling loop, it sends the fetched request to the scheduler. It also
+ * continuously listens for any messages from the scheduler.
  * 
- * @author 
+ * For iteration 1, the floor send/read request to/from the scheduler.
+ * 
+ * @author Shoaib Khan
  * @version Iteration 1 - February 1st, 2020
  */
 public class Floor implements Runnable {
-	private ArrayList<FloorSubSystem> floorSubSystems;
-	
-	public Floor() {
-		floorSubSystems = new ArrayList<>();
-	}
-	
-	public ArrayList<FloorSubSystem> getFloorSubSystems() {
-		return floorSubSystems;
-	}
-	
-	public void fetchFloorSubSystems() {
-		Parser parser = new Parser();
-		floorSubSystems = parser.getFloorSubSystems();
-	}
-	
-	public void displayAllSubSystems() {
-		for (FloorSubSystem floorSubSystem: floorSubSystems) {
-			System.out.println(floorSubSystem);
-		}
-	}
-	
-	public void startThread() {
-		Thread thread = new Thread(this);
-		thread.start();
-	}
-	
-	public void notifyScheduler() {
-		// Add code here
-	}
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public static void main(String args[]) {
-		Floor floor = new Floor();
-		floor.fetchFloorSubSystems();
-		floor.displayAllSubSystems();
-	}
+    /**
+     * ArrayDeque to store all the requests
+     */
+    private Deque<RequestData> requestData;
+
+    /**
+     * Scheduler instance to fetch and send requests to the scheduler
+     */
+    private Scheduler scheduler;
+
+    /**
+     * Default constructor to initialize the class variables
+     * 
+     * @param
+     */
+    public Floor(Scheduler scheduler) {
+        requestData = new ArrayDeque<>();
+        this.scheduler = scheduler;
+    }
+
+    /**
+     * Method to fetch the request from the file. Internally calls the parser class
+     * to fetch the requests.
+     * 
+     * @return The number of requests that were parsed from the file, as an int.
+     */
+    public int fetchRequests() {
+        Parser parser = new Parser();
+        requestData = parser.getRequestFromFile();
+        return requestData.size();
+    }
+
+    /**
+     * Method to display all the requests in the queue.
+     */
+    public void displayAllRequests() {
+        for (RequestData requestData : this.requestData) {
+            System.out.println(requestData);
+        }
+    }
+
+    /**
+     * Thread execution routine.
+     */
+    @Override
+    public void run() {
+
+        // Fetch all the requests
+        int totalRequests = fetchRequests();
+
+        // Keep track of the data received.
+        int dataReceived = 0;
+
+        // In a continuous polling loop, try sending and receiving data to/from the
+        // scheduler.
+        while (true) {
+            try {
+                // If the data received is less than the total fetched requests
+                // Keep sending and receiving data to/from the scheduler.
+                if (dataReceived < totalRequests) {
+                    // Send request to the scheduler.
+                    scheduler.setRequest(requestData.pop());
+
+                    // Wait 100 ms.
+                    // THIS IS JUST USED FOR ITERATION 1.
+                    Thread.sleep(100);
+
+                    // Display message from the scheduler.
+                    System.out.println("Floor received infromation from Scheduler: " + scheduler.getRequest().toString()
+                            + "\nThat is success #" + ++dataReceived + "/" + totalRequests + "\n");
+                } else
+                    System.exit(0);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
