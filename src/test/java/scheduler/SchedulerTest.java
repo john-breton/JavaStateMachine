@@ -4,11 +4,9 @@
 package scheduler;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.Assert.assertNotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import elevatorSubsystem.Elevator;
 import floorSubsystem.Floor;
 import floorSubsystem.RequestData;
@@ -49,6 +47,5 @@ class SchedulerTest {
 		RequestData data = new RequestData();
 		scheduler.setRequest(data);
 		assertSame(data,scheduler.getRequest());
-}
-
+	}
 }

@@ -8,10 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static org.junit.Assert.assertNotNull;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,12 +38,12 @@ class FloorTest {
 
 	}
 	
-	@Before
+	@BeforeEach
 	public void setUpStreams() {
 	    System.setOut(new PrintStream(outContent));
 	}
 
-	@After
+	@AfterEach
 	public void restoreStreams() {
 	    System.setOut(originalOut);
 	}
