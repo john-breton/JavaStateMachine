@@ -25,6 +25,13 @@ public class Elevator implements Runnable {
 
     // The current request the Elevator is handling.
     private RequestData currentRequest;
+    
+    /**
+     * EXPERMENTAL VALUE FOR NOW (JUST TESTING)
+     * VALUE TAKEN FROM ITERATION 0
+     * USING TIME BETWEEN PER FLOOR AT FULL ACCELERATION
+     */
+    private static final double TIME_PER_FLOOR = 2.29;
 
     /**
      * Construct a new Elevator.
@@ -32,6 +39,41 @@ public class Elevator implements Runnable {
     public Elevator(Scheduler scheduler) {
         workQueue = new ArrayDeque<RequestData>();
         this.scheduler = scheduler;
+    }
+    
+    public void move(int floor) {
+    	try {
+			System.out.println("Elevator: Floor " + floor);
+			Thread.sleep((long) (TIME_PER_FLOOR * 1000));
+		} catch (InterruptedException e) {
+			System.out.println("Error: Elevator cannot not move");
+		}
+    }
+    
+    public void moveFloors() {
+    	int currentFloor = currentRequest.getCurrentFloor();
+    	int destinationFloor = currentRequest.getDestinationFloor(); 
+    	
+    	
+    	if (currentFloor < destinationFloor) {
+    		int count = currentFloor;
+    		while (count <= destinationFloor) {
+    			this.move(count);
+    			count++;
+    		}
+    	}
+    	
+    	else if (currentFloor > destinationFloor) {
+    		int count = currentFloor;
+    		while (count >= destinationFloor) {
+    			this.move(count);
+    			count--;
+    		}
+    	}
+    	
+    	else {
+    		System.out.println("Elevator is already at the floor");
+    	}
     }
 
     /**
@@ -66,6 +108,7 @@ public class Elevator implements Runnable {
                 // Confirmation that data has been received is printed to the console.
                 System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
                 System.out.println(toString());
+                this.moveFloors();
                 // Try to give what we just grabbed back to the Scheduler so that it can be
                 // passed along to the Floor.
                 scheduler.setRequest(currentRequest);
