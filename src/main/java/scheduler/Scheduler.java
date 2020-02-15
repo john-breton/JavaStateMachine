@@ -15,79 +15,117 @@ import floorSubsystem.RequestData;
  * back to the floor.
  * 
  * @author John Breton, Shoaib Khan
- * @version Iteration 1 - February 1st, 2020
+ * @version Iteration 2 - February 15th, 2020
  */
 public class Scheduler implements Runnable {
 
-	/**
-	 * Deque to store all the requests
-	 */
-	private Deque<RequestData> requestData;
-	private Elevator elevator;
-	private RequestData notifiedRequest;
+    /**
+     * Deque to store all the requests
+     */
+    private Deque<RequestData> requestData;
+    
+    /**
+     * Notification request to store request from the elevator
+     */
+    private RequestData notifiedRequest;
+    
+    /**
+     * Elevator instance to add the request to its work queue
+     */
+    private Elevator elevator; 
 
-	/**
-	 * Default constructor to initialize the class variables.
-	 */
-	public Scheduler() {
-		requestData = new ArrayDeque<>();
-		notifiedRequest = null;
-		elevator = null;
-	}
 
-	/**
-	 * Overloaded constructor to initialize the class variables.
-	 */
-	public Scheduler(Elevator elevator) {
-		requestData = new ArrayDeque<>();
-		notifiedRequest = null;
-		this.elevator = elevator;
-	}
+    /**
+     * Default constructor to initialize the class variables.
+     */
+    public Scheduler() {
+        requestData = new ArrayDeque<>();
+        notifiedRequest = null;
+        elevator = null;
+    }
+    
+    /**
+     * Overloaded constructor to initialize the class variables.
+     */
+    public Scheduler(Elevator elevator) {
+        requestData = new ArrayDeque<>();
+        notifiedRequest = null;
+        this.elevator = elevator;
+    }
 
-	/**
-	 * Method to set and store the requests from the elevator and floor threads.
-	 * 
-	 * @param requestData The request being sent from either the elevator or floor
-	 *                    thread
-	 * @throws InterruptedException Thrown if a thread is interrupted while
-	 *                              accessing the method
-	 */
-	public synchronized void setRequest(RequestData requestData) throws InterruptedException {
+    /**
+     * Method to set and store the requests from the elevator and floor threads.
+     * 
+     * @param requestData The request being sent from either the elevator or floor
+     *                    thread
+     * @throws InterruptedException Thrown if a thread is interrupted while
+     *                              accessing the method
+     */
+    public synchronized void setRequest(RequestData requestData) throws InterruptedException {
 
-		// If a request is already pending.
-		if (!this.requestData.isEmpty()) {
-			// Make the thread that is making the request to wait.
-			this.wait();
-		}
+        // If a request is already pending.
+        if (!this.requestData.isEmpty()) {
+            // Make the thread that is making the request to wait.
+            this.wait();
+        }
 
-		// Add the request in the queue.
-//        this.requestData.add(requestData);
+        // Print out a message to notify where the request is coming is from and what
+        // the request it.
+        System.out.println(
+                "\nScheduler received information from " + Thread.currentThread().getName() + ": " + requestData);
+        
+        elevator.addToQueue(requestData);
 
-		// Print out a message to notify where the request is coming is from and what
-		// the request it.
-		System.out.println(
-				"\nScheduler received information from " + Thread.currentThread().getName() + ": " + requestData);
+        // Notify the all the other threads to start sending and receiving again.
+        notifyAll();
+    }
+    
+    /**
+     * Method to notify the scheduler
+     * @param requestData
+     * @throws InterruptedException
+     */
+    public synchronized void notifyScheduler(RequestData requestData) throws InterruptedException {
+    	notifiedRequest = requestData;
+    	 System.out.println(
+                 "Scheduler received information from " + Thread.currentThread().getName() + ": " + requestData);
+    	 notifyAll();
+    }
+    
+    /**
+     * Method to get all the notified request from the elevator
+     * @return
+     */
+    public synchronized RequestData getNotifiedRequest() {
+    	if (notifiedRequest != null) {
+    		RequestData request = notifiedRequest;
+    		notifiedRequest = null;
+    		return request;
+    	}
+    	return notifiedRequest;
+    }
 
-		elevator.addToQueue(requestData);
+    /**
+     * Return the most current pending request from the queue.
+     * 
+     * @return The RequestData being retrieved from the queue.
+     * @throws InterruptedException Thrown if a thread is interrupted while
+     *                              accessing the method
+     */
+    public synchronized RequestData getRequest() throws InterruptedException {
 
-		// Notify the all the other threads to start sending and receiving again.
-		notifyAll();
-	}
+        // If there are no pending requests
+        if (requestData.isEmpty()) {
 
-	public synchronized void notifyScheduler(RequestData requestData) throws InterruptedException {
-		notifiedRequest = requestData;
-		System.out.println(
-				"Scheduler received information from " + Thread.currentThread().getName() + ": " + requestData);
-		notifyAll();
-	}
+            // Make the thread that is making the request to wait.
+            this.wait();
+        }
 
-	public synchronized RequestData getNotifiedRequest() {
-		if (notifiedRequest != null) {
-			RequestData request = notifiedRequest;
-			notifiedRequest = null;
-			return request;
-		}
-		return notifiedRequest;
+        // Notify the all the other threads to start sending and receiving again.
+        notifyAll();
+
+        // Return the request
+        return requestData.pop();
 	}
 
 	/**

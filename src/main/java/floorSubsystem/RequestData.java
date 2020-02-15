@@ -5,6 +5,7 @@ package floorSubsystem;
  * document.
  * 
  * @auther Shoaib Khan
+ * @version Iteration 2 - February 15th, 2020
  */
 public class RequestData {
 
