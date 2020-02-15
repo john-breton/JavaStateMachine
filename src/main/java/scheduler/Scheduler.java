@@ -82,6 +82,11 @@ public class Scheduler implements Runnable {
     }
     
     public synchronized RequestData getNotifiedRequest() {
+    	if (notifiedRequest != null) {
+    		RequestData request = notifiedRequest;
+    		notifiedRequest = null;
+    		return request;
+    	}
     	return notifiedRequest;
     }
 
