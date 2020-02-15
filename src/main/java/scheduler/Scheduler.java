@@ -129,29 +129,6 @@ public class Scheduler implements Runnable {
 	}
 
 	/**
-	 * Return the most current pending request from the queue.
-	 * 
-	 * @return The RequestData being retrieved from the queue.
-	 * @throws InterruptedException Thrown if a thread is interrupted while
-	 *                              accessing the method
-	 */
-	public synchronized RequestData getRequest() throws InterruptedException {
-
-		// If there are no pending requests
-		if (requestData.isEmpty()) {
-
-			// Make the thread that is making the request to wait.
-			this.wait();
-		}
-
-		// Notify the all the other threads to start sending and receiving again.
-		notifyAll();
-
-		// Return the request
-		return requestData.pop();
-	}
-
-	/**
 	 * Thread execution routine.
 	 */
 	@Override
