@@ -1,7 +1,7 @@
-SYSC 3303 - Project - Iteration 1
+SYSC 3303 - Project - Iteration 2
 Lab Section A1 - Group 7
 John Breton, Shoaib Khan, Osayimwen Odia, Deji Sayomi
-February 1st, 2020
+February 15th, 2020
 README.txt prepared by: John Breton
 
 ## SETUP INSTRUCTIONS ##
@@ -36,21 +36,20 @@ If you have any trouble with anything about the project please email me at: john
 and I will help you in any way possible.
 
 
-## BREAKDOWN OF RESPONSIBILITIES ##
+## BREAKDOWN OF RESPONSIBILITIES FOR ITERATION 2 ##
 John Breton 
- - Elevator class, Scheduler class, Simulator class, sequence diagram, GitHub repo upkeep, code refactoring
+ - Need info here
 Shoaib Khan
- - Floor class, Scheduler class, Simulator class, class diagram corrections, Parser class, RequestData class
+ - Floor class, Scheduler class, Simulator class, Elevator class, UML Diagrams
 Osayimwen (Justice) Odia
- - All JUnit tests (poor guy), class diagram
+ - Timer class, Elevator Sub System State Diagram
 Deji Sayomi
- - Iteration 0 data calculations, Scheduler class
+ - Need info here
 
 If something is listed multiple times that's because it was worked on by multiple people. If you need
 further clarification on how work was broken up, please check the Javadoc @author tags, or email me
 at: johnbreton@cmail.carleton.ca with your github account and I can add you to our repo so that you 
 have a detailed breakdown on who commited what throughout the iteration.
-
 
 If you require any further information please let me know. If there is something Java related that 
 seems abnormal, even if it's not in our project. I can also help with that as well, just let me know. 
