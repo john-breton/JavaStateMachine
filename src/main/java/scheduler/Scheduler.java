@@ -135,7 +135,7 @@ public class Scheduler implements Runnable {
 	public void run() {
 		while (true) {
 			// This is where the scheduler would actually schedule requests.
-			// But that isn't required for Iteration 1, so instead it does nothing.
+			// But that isn't required for Iteration 2, so instead it does nothing.
 		}
 
 	}
