@@ -2,38 +2,35 @@
  * 
  */
 package timer;
+import java.util.Date;
+
 
 /**
  * @author osayimwense
  *
  */
 public class Timer {
+	private long time;
+
 
 	/**
 	 * 
 	 */
 	public Timer() {
-		
+		time = new Date().getTime();
+
 	}
 	
+	public boolean itsTime(int seconds) {
+		return (new Date().getTime()-time) > seconds;
+	}
+
+	public boolean itsTime(int minutes, int seconds) {
+		return (new Date().getTime()-time) > ((minutes*60) + seconds);
+	}
 	
-	public void count(int seconds) {
-		
-		try {
-			Thread.sleep(1000*seconds);
-			
-		} catch (InterruptedException e) {
-			
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	public boolean itsTime(int hours, int minutes, int seconds) {
+		return (new Date().getTime()-time) > ((hours*3600) + (minutes*60) + seconds);
 
 	}
-
 }
