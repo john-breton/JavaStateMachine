@@ -17,16 +17,14 @@ import scheduler.Scheduler;
 
 /**
  * @author osayimwense
- *
+ * @version Iteration 2 - February 15th, 2020
  */
 class FloorTest {
 	
 	Floor validFloor;
 	Floor invalidFloor;
 	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 	private final PrintStream originalOut = System.out;
-	private final PrintStream originalErr = System.err;
 	
 	/**
 	 * @throws java.lang.Exception

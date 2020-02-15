@@ -19,8 +19,8 @@ import scheduler.Scheduler;
 /**
  * Tests for the Elevator class.
  * 
- * @author osayimwense
- * @version Iteration 1 - February 1st, 2020
+ * @author osayimwense, John Breton
+ * @version Iteration 2 - February 15th, 2020
  */
 class ElevatorTest {
 
@@ -59,4 +59,5 @@ class ElevatorTest {
         assertNotNull(invalidElevator);
         assertNotNull(validElevator);
     }
+    
 }

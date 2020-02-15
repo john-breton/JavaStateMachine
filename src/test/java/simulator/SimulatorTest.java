@@ -15,7 +15,7 @@ import scheduler.Scheduler;
 
 /**
  * @author osayimwense
- *
+ * @version Iteration 2 - February 15th, 2020
  */
 class SimulatorTest {
 
