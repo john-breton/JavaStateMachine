@@ -24,12 +24,14 @@ public class Scheduler implements Runnable {
      */
     private Deque<RequestData> requestData;
     private Elevator elevator; 
+    private RequestData notifiedRequest;
 
     /**
      * Default constructor to initialize the class variables.
      */
     public Scheduler() {
         requestData = new ArrayDeque<>();
+        notifiedRequest = null;
         elevator = null;
     }
     
@@ -38,6 +40,7 @@ public class Scheduler implements Runnable {
      */
     public Scheduler(Elevator elevator) {
         requestData = new ArrayDeque<>();
+        notifiedRequest = null;
         this.elevator = elevator;
     }
 
@@ -63,14 +66,23 @@ public class Scheduler implements Runnable {
         // Print out a message to notify where the request is coming is from and what
         // the request it.
         System.out.println(
-                "Scheduler received information from " + Thread.currentThread().getName() + ": " + requestData);
+                "\nScheduler received information from " + Thread.currentThread().getName() + ": " + requestData);
         
-        System.out.println("adding to elevator");
         elevator.addToQueue(requestData);
-//        System.out.println(elevator);
 
         // Notify the all the other threads to start sending and receiving again.
         notifyAll();
+    }
+    
+    public synchronized void notifyScheduler(RequestData requestData) throws InterruptedException {
+    	notifiedRequest = requestData;
+    	 System.out.println(
+                 "Scheduler received information from " + Thread.currentThread().getName() + ": " + requestData);
+    	 notifyAll();
+    }
+    
+    public synchronized RequestData getNotifiedRequest() {
+    	return notifiedRequest;
     }
 
     /**
@@ -94,7 +106,7 @@ public class Scheduler implements Runnable {
 
         // Return the request
         return requestData.pop();
-    }
+	}
 
     /**
      * Thread execution routine.

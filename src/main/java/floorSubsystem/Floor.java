@@ -123,9 +123,17 @@ public class Floor implements Runnable {
 					// Will be removed in future iterations.
 					Thread.sleep(200);
 
-					++dataReceived;
-				} else
+				} else {
 					Thread.currentThread().interrupt();
+				}	
+				
+				
+				RequestData request = scheduler.getNotifiedRequest();
+				if (request != null) {
+					System.out.println("Floor received information from Scheduler: " + request);
+					System.out.println("That is success #" + ++dataReceived + "/" + totalRequests + "\n");
+				}
+					
 			} catch (InterruptedException e) {
 				System.exit(0);
 				//e.printStackTrace();

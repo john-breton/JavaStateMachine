@@ -120,11 +120,16 @@ public class Elevator implements Runnable {
 		while (true) {
 			System.out.print("");
 			if (!workQueue.isEmpty()) {
-				System.out.println("ELEVATOR GOT WORK");
 				currentRequest = workQueue.pop();
 				System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
 				System.out.println(toString());
-				this.moveFloors();
+				if (this.moveFloors()) {
+					try {
+						scheduler.notifyScheduler(currentRequest);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}
