@@ -14,7 +14,7 @@ import floorSubsystem.Floor;
 import scheduler.Scheduler;
 
 /**
- * @author osayimwense
+ * @author osayimwense, John Breton
  * @version Iteration 2 - February 15th, 2020
  */
 class SimulatorTest {
@@ -67,9 +67,8 @@ class SimulatorTest {
 
 	@Test
 	void test() {
-		
+		// Assert that content is being printed out to the console.
 		assertNotNull(outContent.toString());
-
 	}
 
 }

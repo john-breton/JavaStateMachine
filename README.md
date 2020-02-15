@@ -48,7 +48,7 @@ Date: February 15th, 2020
 
 ## Current Elevator State Diagram
 <p style="text-align:right">
-<img src="documentation/Iteration 2/State Diagram Images/ElevatorStateDiagram.png" alt="Elevator State Diagram">
+<img src="documentation/Iteration 2/State Diagram Images/ElevatorSubSystemStateDiagram.png" alt="Elevator State Diagram">
 </p>
 Date: February 15th, 2020
 

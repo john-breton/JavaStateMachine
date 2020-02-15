@@ -10,7 +10,9 @@ import timer.Timer;
  * a polling loop, it sends the fetched request to the scheduler. It also
  * continuously listens for any messages from the scheduler.
  * 
- * For iteration 1, the floor send/read request to/from the scheduler.
+ * For Iteration 2, the floor will only send a request if the current amount of time matches
+ * that of the request's time-stamp. It will wait for confirmation from the scheduler that the
+ * elevator actually reached the destination floor.
  * 
  * @author Shoaib Khan, John Breton
  * @version Iteration 2 - February 15th, 2020
@@ -108,23 +110,24 @@ public class Floor implements Runnable {
 		while (dataReceived < totalRequests) {
 			try {
 				// Keep sending and receiving data to/from the scheduler.
-					if (!requestData.isEmpty()) {
-						String time[] = requestData.peek().getTime().split(":|\\.");
-						// Wait until the correct amount of time has passed before sending the next
-						// request (busy waiting loop).
-						while (!timer.itsTime(Integer.parseInt(time[0]) - startHour,
-								Integer.parseInt(time[1]) - startMinute, Integer.parseInt(time[2]) - startSecond,
-								Integer.parseInt(time[3]) - startMillisecond));
-						// Send request to the scheduler because it is now time to do so.
-						scheduler.setRequest(requestData.pop());
-					}
-					
-					RequestData request = scheduler.getNotifiedRequest();
-					
-					if (request != null) {
-						System.out.println("Floor received information from Scheduler: " + request);
-						System.out.println("That is success #" + ++dataReceived + "/" + totalRequests + "\n");
-					}			
+				if (!requestData.isEmpty()) {
+					String time[] = requestData.peek().getTime().split(":|\\.");
+					// Wait until the correct amount of time has passed before sending the next
+					// request (busy waiting loop).
+					while (!timer.itsTime(Integer.parseInt(time[0]) - startHour,
+							Integer.parseInt(time[1]) - startMinute, Integer.parseInt(time[2]) - startSecond,
+							Integer.parseInt(time[3]) - startMillisecond))
+						;
+					// Send request to the scheduler because it is now time to do so.
+					scheduler.setRequest(requestData.pop());
+				} 
+
+				RequestData request = scheduler.getNotifiedRequest();
+
+				if (request != null) {
+					System.out.println("Floor received information from Scheduler: " + request);
+					System.out.println("That is success #" + ++dataReceived + "/" + totalRequests + "\n");
+				}
 			} catch (InterruptedException e) {
 				System.exit(0);
 			}
