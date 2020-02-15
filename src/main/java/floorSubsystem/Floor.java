@@ -101,7 +101,7 @@ public class Floor implements Runnable {
 	 * Method to send requests to the scheduler
 	 * @throws InterruptedException
 	 */
-	public void sendRequestToScheduler() throws InterruptedException {
+	private void sendRequestToScheduler() throws InterruptedException {
 		if (!requestData.isEmpty()) {
 			String time[] = requestData.peek().getTime().split(":|\\.");
 			// Wait until the correct amount of time has passed before sending the next
@@ -117,7 +117,7 @@ public class Floor implements Runnable {
 	/**
 	 * Method to receive requests from the scheduler
 	 */
-	public void checkRequestsFromScheduler() {
+	private void checkRequestsFromScheduler() {
 		
 		// Get request
 		RequestData request = scheduler.getNotifiedRequest();

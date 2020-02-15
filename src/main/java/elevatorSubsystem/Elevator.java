@@ -77,7 +77,7 @@ public class Elevator implements Runnable {
 	 * Method to move the elevator to a particular floor
 	 * @param floor
 	 */
-	public void move(int floor) {
+	private void move(int floor) {
 		try {
 			System.out.println("Elevator: Floor " + floor);
 			
@@ -92,7 +92,7 @@ public class Elevator implements Runnable {
 	 * Method to move floors
 	 * @return
 	 */
-	public boolean moveFloors() {
+	private boolean moveFloors() {
 		
 		// Get the current and the destination floors
 		int currentFloor = currentRequest.getCurrentFloor();
