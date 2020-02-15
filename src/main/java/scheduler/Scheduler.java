@@ -2,6 +2,7 @@ package scheduler;
 
 import java.util.*;
 
+import elevatorSubsystem.Elevator;
 import floorSubsystem.RequestData;
 
 /**
@@ -22,12 +23,22 @@ public class Scheduler implements Runnable {
      * Deque to store all the requests
      */
     private Deque<RequestData> requestData;
+    private Elevator elevator; 
 
     /**
      * Default constructor to initialize the class variables.
      */
     public Scheduler() {
         requestData = new ArrayDeque<>();
+        elevator = null;
+    }
+    
+    /**
+     * Overloaded constructor to initialize the class variables.
+     */
+    public Scheduler(Elevator elevator) {
+        requestData = new ArrayDeque<>();
+        this.elevator = elevator;
     }
 
     /**
@@ -47,12 +58,16 @@ public class Scheduler implements Runnable {
         }
 
         // Add the request in the queue.
-        this.requestData.add(requestData);
+//        this.requestData.add(requestData);
 
         // Print out a message to notify where the request is coming is from and what
         // the request it.
         System.out.println(
                 "Scheduler received information from " + Thread.currentThread().getName() + ": " + requestData);
+        
+        System.out.println("adding to elevator");
+        elevator.addToQueue(requestData);
+//        System.out.println(elevator);
 
         // Notify the all the other threads to start sending and receiving again.
         notifyAll();

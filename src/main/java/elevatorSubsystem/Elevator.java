@@ -36,9 +36,29 @@ public class Elevator implements Runnable {
     /**
      * Construct a new Elevator.
      */
+    public Elevator() {
+        workQueue = new ArrayDeque<RequestData>();
+    }
+    
+    /**
+     * Overloaded constructor to set the class variables
+     * @param scheduler
+     */
     public Elevator(Scheduler scheduler) {
         workQueue = new ArrayDeque<RequestData>();
         this.scheduler = scheduler;
+    }
+    
+    /**
+     * Method to set the scheduler
+     * @param scheduler
+     */
+    public void setScheduler(Scheduler scheduler) {
+    	 this.scheduler = scheduler;
+    }
+    
+    public void addToQueue(RequestData requestData) {
+    	workQueue.add(requestData);
     }
     
     public void move(int floor) {
@@ -95,28 +115,36 @@ public class Elevator implements Runnable {
     @Override
     public void run() {
         while (true) {
-            try {
+//            try {
                 // Sleep the thread to ensure it does not grab what it just sent to the
                 // scheduler (A hack solution for the purposes of Iteration 1).
-                Thread.sleep(100);
+//                Thread.sleep(100);
                 // Try to add to the Elevator's workQueue, assuming the Scheduler has something
                 // for the Elevator to grab.
-                workQueue.add(scheduler.getRequest());
+//                workQueue.add(scheduler.getRequest());
                 // For Iteration 1, we immediately return what we grab from the Scheduler, so we
                 // pop the workQueue.
-                currentRequest = workQueue.pop();
+//        		System.out.println(workQueue.size());
+                if (!workQueue.isEmpty()) {
+                	System.out.println("ELEVATOR GOT WORK");
+                	 currentRequest = workQueue.pop();
+                     System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
+                     System.out.println(toString());
+                     this.moveFloors();
+                }
+                
+                
+                
                 // Confirmation that data has been received is printed to the console.
-                System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
-                System.out.println(toString());
-                this.moveFloors();
+
                 // Try to give what we just grabbed back to the Scheduler so that it can be
                 // passed along to the Floor.
-                scheduler.setRequest(currentRequest);
-            } catch (InterruptedException e) {
+//                scheduler.setRequest(currentRequest);
+//            } catch (InterruptedException e) {
                 // In future Iterations, we will make use of a log file to track when exceptions
                 // occur.
-                e.printStackTrace();
-            }
+//                e.printStackTrace();
+//            }
         }
     }
 
