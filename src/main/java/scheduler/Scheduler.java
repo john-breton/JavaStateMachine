@@ -15,7 +15,7 @@ import floorSubsystem.RequestData;
  * back to the floor.
  * 
  * @author John Breton, Shoaib Khan
- * @version Iteration 1 - February 1st, 2020
+ * @version Iteration 2 - February 15th, 2020
  */
 public class Scheduler implements Runnable {
 
@@ -23,8 +23,17 @@ public class Scheduler implements Runnable {
      * Deque to store all the requests
      */
     private Deque<RequestData> requestData;
-    private Elevator elevator; 
+    
+    /**
+     * Notification request to store request from the elevator
+     */
     private RequestData notifiedRequest;
+    
+    /**
+     * Elevator instance to add the request to its work queue
+     */
+    private Elevator elevator; 
+
 
     /**
      * Default constructor to initialize the class variables.
@@ -60,9 +69,6 @@ public class Scheduler implements Runnable {
             this.wait();
         }
 
-        // Add the request in the queue.
-//        this.requestData.add(requestData);
-
         // Print out a message to notify where the request is coming is from and what
         // the request it.
         System.out.println(
@@ -74,6 +80,11 @@ public class Scheduler implements Runnable {
         notifyAll();
     }
     
+    /**
+     * Method to notify the scheduler
+     * @param requestData
+     * @throws InterruptedException
+     */
     public synchronized void notifyScheduler(RequestData requestData) throws InterruptedException {
     	notifiedRequest = requestData;
     	 System.out.println(
@@ -81,6 +92,10 @@ public class Scheduler implements Runnable {
     	 notifyAll();
     }
     
+    /**
+     * Method to get all the notified request from the elevator
+     * @return
+     */
     public synchronized RequestData getNotifiedRequest() {
     	if (notifiedRequest != null) {
     		RequestData request = notifiedRequest;

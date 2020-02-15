@@ -9,7 +9,7 @@ import scheduler.Scheduler;
  * It contains the classes Thread, Scheduler, Floor and Elevator
  * 
  * @author Shoaib Khan, John Breton
- * @version Iteration 1 - February 1st, 2020
+ * @version Iteration 2 - February 15th, 2020
  */
 public class Simulator {
 

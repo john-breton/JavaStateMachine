@@ -12,23 +12,30 @@ import java.util.*;
  * scheduler, it takes the information and immediately tries to sends it back to
  * the scheduler.
  *
- * @author John Breton
- * @version Iteration 1 - February 1st, 2020
+ * @author John Breton, Shoaib Khan
+ * @version Iteration 2 - February 15th, 2020
  */
 public class Elevator implements Runnable {
 
-	// The queue used to keep track of the work for the Elevator.
+	/**
+	 * The queue used to keep track of the work for the Elevator.
+	 */
 	private Deque<RequestData> workQueue;
 
-	// A reference to where the Elevator is expecting to receive work from.
+	/**
+	 * A reference to where the Elevator is expecting to receive work from.
+	 */
 	private Scheduler scheduler;
 
-	// The current request the Elevator is handling.
+	/**
+	 * The current request the Elevator is handling.
+	 */
 	private RequestData currentRequest;
 
 	/**
-	 * EXPERMENTAL VALUE FOR NOW (JUST TESTING) VALUE TAKEN FROM ITERATION 0 USING
-	 * TIME BETWEEN PER FLOOR AT FULL ACCELERATION
+	 * Experimental value for iteration 2.
+	 * Value taken from iteration 0 calculations
+	 * Time it takes to move 1 floor at full acceleration 
 	 */
 	private static final double TIME_PER_FLOOR = 2.29;
 
@@ -58,23 +65,40 @@ public class Elevator implements Runnable {
 		this.scheduler = scheduler;
 	}
 
+	/**
+	 * Method to add a request to the elevator queue.
+	 * @param requestData
+	 */
 	public void addToQueue(RequestData requestData) {
 		workQueue.add(requestData);
 	}
 
+	/**
+	 * Method to move the elevator to a particular floor
+	 * @param floor
+	 */
 	public void move(int floor) {
 		try {
 			System.out.println("Elevator: Floor " + floor);
+			
+			// Wait while the elevator is moving in between floors
 			Thread.sleep((long) (TIME_PER_FLOOR * 1000));
 		} catch (InterruptedException e) {
 			System.out.println("Error: Elevator cannot not move");
 		}
 	}
 
+	/**
+	 * Method to move floors
+	 * @return
+	 */
 	public boolean moveFloors() {
+		
+		// Get the current and the destination floors
 		int currentFloor = currentRequest.getCurrentFloor();
 		int destinationFloor = currentRequest.getDestinationFloor();
 
+		// If the elevator is moving up
 		if (currentFloor < destinationFloor) {
 			int count = currentFloor;
 			while (count <= destinationFloor) {
@@ -84,6 +108,7 @@ public class Elevator implements Runnable {
 			return true;
 		}
 
+		// If the elevator is moving down
 		else if (currentFloor > destinationFloor) {
 			int count = currentFloor;
 			while (count >= destinationFloor) {
@@ -93,6 +118,7 @@ public class Elevator implements Runnable {
 			return true;
 		}
 
+		// If the destination floor is the same as the current floor
 		else {
 			System.out.println("Elevator is already at the floor");
 			return false;
