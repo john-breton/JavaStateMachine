@@ -40,9 +40,14 @@ public class Floor implements Runnable {
 	private String startTime;
 
 	/**
-	 * 
+	 * Time variables
 	 */
 	private int startHour, startMinute, startSecond, startMillisecond;
+	
+	/**
+	 * Variables to get track of total requests and received requests.
+	 */
+	private int totalRequests, dataReceived;
 
 	/**
 	 * Default constructor to initialize the class variables
@@ -53,6 +58,10 @@ public class Floor implements Runnable {
 		requestData = new ArrayDeque<>();
 		this.scheduler = scheduler;
 		timer = new Timer();
+		dataReceived = 0;
+		
+		// Fetch all the requests
+		totalRequests = fetchRequests();
 	}
 
 	/**
@@ -87,47 +96,64 @@ public class Floor implements Runnable {
 		startSecond = Integer.parseInt(temp[2]);
 		startMillisecond = Integer.parseInt(temp[3]);
 	}
+	
+	/**
+	 * Method to send requests to the scheduler
+	 * @throws InterruptedException
+	 */
+	public void sendRequestToScheduler() throws InterruptedException {
+		if (!requestData.isEmpty()) {
+			String time[] = requestData.peek().getTime().split(":|\\.");
+			// Wait until the correct amount of time has passed before sending the next
+			// request (busy waiting loop).
+			while (!timer.itsTime(Integer.parseInt(time[0]) - startHour,
+					Integer.parseInt(time[1]) - startMinute, Integer.parseInt(time[2]) - startSecond,
+					Integer.parseInt(time[3]) - startMillisecond));
+			// Send request to the scheduler because it is now time to do so.
+			scheduler.setRequest(requestData.pop());
+		}
+	}
+	
+	/**
+	 * Method to receive requests from the scheduler
+	 */
+	public void checkRequestsFromScheduler() {
+		
+		// Get request
+		RequestData request = scheduler.getNotifiedRequest();
+		
+		// If there is a request
+		if (request != null) {
+			
+			// Print the request
+			System.out.println("Floor received information from Scheduler: " + request);
+			System.out.println("That is success #" + ++dataReceived + "/" + totalRequests + "\n");
+			
+			// If all the expected request are received, terminate the program.
+			if (dataReceived == totalRequests) {
+				System.out.println("\nSimulation complete!");
+				System.exit(0);
+			}
+		}		
+	}
 
 	/**
 	 * Thread execution routine.
 	 */
 	@Override
 	public void run() {
-
-		// Fetch all the requests
-		int totalRequests = fetchRequests();
-
 		System.out.println("The simulations is beginning at time " + startTime);
 
 		// Keep track of the time the simulation is beginning at for timing purposes.
 		convertStartTime();
-
-		// Keep track of the data received.
-		int dataReceived = 0;
 
 		// In a continuous polling loop, try sending and receiving data to/from the
 		// scheduler till the data received is less than the total fetched requests
 		while (dataReceived < totalRequests) {
 			try {
 				// Keep sending and receiving data to/from the scheduler.
-				if (!requestData.isEmpty()) {
-					String time[] = requestData.peek().getTime().split(":|\\.");
-					// Wait until the correct amount of time has passed before sending the next
-					// request (busy waiting loop).
-					while (!timer.itsTime(Integer.parseInt(time[0]) - startHour,
-							Integer.parseInt(time[1]) - startMinute, Integer.parseInt(time[2]) - startSecond,
-							Integer.parseInt(time[3]) - startMillisecond))
-						;
-					// Send request to the scheduler because it is now time to do so.
-					scheduler.setRequest(requestData.pop());
-				} 
-
-				RequestData request = scheduler.getNotifiedRequest();
-
-				if (request != null) {
-					System.out.println("Floor received information from Scheduler: " + request);
-					System.out.println("That is success #" + ++dataReceived + "/" + totalRequests + "\n");
-				}
+				this.sendRequestToScheduler();
+				this.checkRequestsFromScheduler();		
 			} catch (InterruptedException e) {
 				System.exit(0);
 			}
