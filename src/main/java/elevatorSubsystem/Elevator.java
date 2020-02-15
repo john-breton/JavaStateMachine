@@ -118,18 +118,13 @@ public class Elevator implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
+			System.out.print("");
 			if (!workQueue.isEmpty()) {
 				System.out.println("ELEVATOR GOT WORK");
 				currentRequest = workQueue.pop();
 				System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
 				System.out.println(toString());
-				if (this.moveFloors())
-					// Let the scheduler know we have arrived at the destination floor.
-					try {
-						scheduler.setRequest(currentRequest);
-					} catch (InterruptedException ex) {
-						ex.printStackTrace();
-					}
+				this.moveFloors();
 			}
 		}
 	}
