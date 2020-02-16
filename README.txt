@@ -31,7 +31,8 @@ capture the idea of each class and how they fit into the elevator simulator. In 
 classes will be renamed to reflect their responsibilities within the whole of the simulator. 
 
 Java classes are located in SYSC-3303/src/main/java while java test classes are located in 
-SYSC-3303/src/test/java. UML documentation can be found in SYSC-3303/documentation/Iteration 1/UML.
+SYSC-3303/src/test/java. UML documentation can be found in SYSC-3303/documentation/Iteration 2/UML.
+State Diagrams are also found within the UML directory, in the appropriately named folder.
 If you have any trouble with anything about the project please email me at: johnbreton@cmail.carleton.ca
 and I will help you in any way possible.
 
@@ -61,6 +62,4 @@ further clarification on how work was broken up, please check the Javadoc @autho
 at: johnbreton@cmail.carleton.ca with your GitHhub account and I can add you to our repo so that you 
 have a detailed breakdown on who commited what throughout the iteration.
 
-If you require any further information please let me know. If there is something Java related that 
-seems abnormal, even if it's not in our project. I can also help with that as well, just let me know. 
-I was a TA for SYSC 2004 last term so I may be more able to help than some other students in this course.
+If you require any further information please let me know.
