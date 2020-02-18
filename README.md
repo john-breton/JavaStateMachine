@@ -29,16 +29,28 @@ This GitHub repository is used for the development of a Java based real-time ele
 ## Current Class Diagram
 
 <p style="text-align:right">
-<img src="documentation/Iteration 1/UML/UMLClassDiagram.png" alt="Class Diagram">
+<img src="documentation/Iteration 2/UML Images/UMLClassDiagram.png" alt="Class Diagram">
 </p>
-Date: February 1st, 2020
+Date: February 15th, 2020
 
 ## Current Sequence Diagram
 
 <p style="text-align:right">
-<img src="documentation/Iteration 1/UML/UMLSequenceDiagram.png" alt="Sequence Diagram">
+<img src="documentation/Iteration 2/UML Images/UMLSequenceDiagram.png" alt="Sequence Diagram">
 </p>
-Date: February 1st, 2020
+Date: February 15th, 2020
+
+## Current Scheduler State Diagram
+<p style="text-align:right">
+<img src="documentation/Iteration 2/State Diagram Images/SchedulerStateDiagram.png" alt="Scheduler State Diagram">
+</p>
+Date: February 15th, 2020
+
+## Current Elevator State Diagram
+<p style="text-align:right">
+<img src="documentation/Iteration 2/State Diagram Images/ElevatorSubSystemStateDiagram.png" alt="Elevator State Diagram">
+</p>
+Date: February 15th, 2020
 
 ## Known issues
 

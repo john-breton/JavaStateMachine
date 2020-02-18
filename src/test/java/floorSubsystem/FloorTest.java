@@ -8,10 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static org.junit.Assert.assertNotNull;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,16 +17,14 @@ import scheduler.Scheduler;
 
 /**
  * @author osayimwense
- *
+ * @version Iteration 2 - February 15th, 2020
  */
 class FloorTest {
 	
 	Floor validFloor;
 	Floor invalidFloor;
 	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 	private final PrintStream originalOut = System.out;
-	private final PrintStream originalErr = System.err;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -41,12 +36,12 @@ class FloorTest {
 
 	}
 	
-	@Before
+	@BeforeEach
 	public void setUpStreams() {
 	    System.setOut(new PrintStream(outContent));
 	}
 
-	@After
+	@AfterEach
 	public void restoreStreams() {
 	    System.setOut(originalOut);
 	}

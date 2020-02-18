@@ -4,23 +4,18 @@
 package simulator;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import elevatorSubsystem.Elevator;
 import floorSubsystem.Floor;
 import scheduler.Scheduler;
 
 /**
- * @author osayimwense
- *
+ * @author osayimwense, John Breton
+ * @version Iteration 2 - February 15th, 2020
  */
 class SimulatorTest {
 
@@ -44,12 +39,12 @@ class SimulatorTest {
 		elevatorThread = new Thread(new Elevator(scheduler), "Elevator");
 	}
 
-	@Before
+	@BeforeEach
 	public void setUpStreams() {
 		System.setOut(new PrintStream(outContent));
 	}
 
-	@After
+	@AfterEach
 	public void restoreStreams() {
 		System.setOut(originalOut);
 	}
@@ -72,9 +67,8 @@ class SimulatorTest {
 
 	@Test
 	void test() {
-		
+		// Assert that content is being printed out to the console.
 		assertNotNull(outContent.toString());
-
 	}
 
 }
