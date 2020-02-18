@@ -52,6 +52,10 @@ public class RequestData {
         isGoingUp = info[2].contains("Up");
         destinationFloor = Integer.parseInt(info[3]);
     }
+    
+//    public RequestData(byte[] byte) {
+//    	
+//    }
 
     /**
      * Overloaded constructor to initialize the class variables
@@ -105,6 +109,36 @@ public class RequestData {
      */
     public int getDestinationFloor() {
         return destinationFloor;
+    }
+    
+    public byte[] toBytes() {
+    	byte[] bytes = new byte[26];
+    	int counter = 0;
+    	
+    	for (byte b: time.getBytes()) {
+    		bytes[counter++] = b;
+    	}    	
+    	bytes[counter++] = (byte) ' ';
+    	
+    	String curFloor = currentFloor + "";
+    	for (byte b: curFloor.getBytes()) {
+    		bytes[counter++] = b;
+    	}
+    	bytes[counter++] = (byte) ' ';
+    	
+    	String direction = isGoingUp ? "Up" : "Down";
+    	for (byte b: direction.getBytes()) {
+    		bytes[counter++] = b;
+    	}
+    	bytes[counter++] = (byte) ' ';
+    	
+    	String destFloor = destinationFloor + "";
+    	for (byte b: destFloor.getBytes()) {
+    		bytes[counter++] = b;
+    	}
+    	bytes[counter++] = (byte) ' ';
+    	
+    	return bytes;
     }
 
     /**
