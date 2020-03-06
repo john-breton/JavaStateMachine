@@ -3,7 +3,9 @@ package scheduler;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.*;
 
 import elevatorSubsystem.Elevator;
@@ -31,12 +33,13 @@ public class Scheduler implements Runnable {
 	/**
 	 * Notification request to store request from the elevator
 	 */
-	private RequestData notifiedRequest;
+	private RequestData notifiedRequest;	
 	
-	private int floorAddress;
+	private static final int FLOOR_SEND_PORT = 23;
 	
+	private static final int ELEVATOR_RECEIVE_PORT = 60;
 	
-	private static final int FLOOR_PORT = 23;
+	private static final int ELEVATOR_SEND_PORT = 61;
 	
 	private static final int DATA_SIZE = 26;
 	
@@ -54,83 +57,28 @@ public class Scheduler implements Runnable {
 		notifiedRequest = null;
 		
 		try {
-			floorSocketReceiver = new DatagramSocket(FLOOR_PORT);
+			floorSocketReceiver = new DatagramSocket(FLOOR_SEND_PORT);
+			elevatorSocketReceiver = new DatagramSocket(ELEVATOR_SEND_PORT);
 			sendSocket = new DatagramSocket();
 		} catch (SocketException e) {
 			System.out.println("Error: Scheduler sub system cannot be initialized.");
 			System.exit(1);
 		}
 	}
-	
 
-//	/**
-//	 * Method to set and store the requests from the elevator and floor threads.
-//	 * 
-//	 * @param requestData The request being sent from either the elevator or floor
-//	 *                    thread
-//	 * @throws InterruptedException Thrown if a thread is interrupted while
-//	 *                              accessing the method
-//	 */
-//	public synchronized void setRequest(RequestData requestData) throws InterruptedException {
-//
-//		// If a request is already pending.
-//		if (!this.requestData.isEmpty()) {
-//			// Make the thread that is making the request to wait.
-//			this.wait();
-//		}
-//
-//		// Print out a message to notify where the request is coming is from and what
-//		// the request it.
-//		System.out.println(
-//				"\nScheduler received information from " + Thread.currentThread().getName() + ": " + requestData);
-//
-//		elevator.addToQueue(requestData);
-//
-//		// Notify the all the other threads to start sending and receiving again.
-//		notifyAll();
-//	}
-//
-//	/**
-//	 * Method to notify the scheduler
-//	 * 
-//	 * @param requestData The request being sent from either the elevator or floor
-//	 *                    thread
-//	 * @throws InterruptedException Thrown if a thread is interrupted while
-//	 *                              accessing the method
-//	 */
-//	public synchronized void notifyScheduler(RequestData requestData) throws InterruptedException {
-//		notifiedRequest = requestData;
-//		System.out.println(
-//				"Scheduler received information from " + Thread.currentThread().getName() + ": " + requestData);
-//		notifyAll();
-//	}
-//
-//	/**
-//	 * Method to get all the notified request from the elevator
-//	 * 
-//	 * @return The RequestData that was passed by the Elevator once it reached its
-//	 *         destination floor
-//	 */
-//	public synchronized RequestData getNotifiedRequest() {
-//		if (notifiedRequest != null) {
-//			RequestData request = notifiedRequest;
-//			notifiedRequest = null;
-//			return request;
-//		}
-//		return notifiedRequest;
-//	}
-
-	public void receivePacketFromFloor() {
+	private void receivePacket(boolean fromFloor) {
 		byte[] request = new byte[DATA_SIZE];
 		receivePacket = new DatagramPacket(request, request.length);
 		try {
-			System.out.println("Scheduler: Waiting for packet");
-
 			// Receive a packet
-			floorSocketReceiver.receive(receivePacket);
+			if (fromFloor) {
+				floorSocketReceiver.receive(receivePacket);
+			}
 			
-			// Store the floor port address
-			floorAddress = receivePacket.getPort();
+			else {
+				elevatorSocketReceiver.receive(receivePacket);
+			}
+			
 		} catch (IOException e) {
 			
 			// Display an error if the packet cannot be received
@@ -141,20 +89,61 @@ public class Scheduler implements Runnable {
 	}
 	
 	/**
-	 * Method to display the information of the receive packet and the contents of the data
-	 * @param requestType
+	 * Method to create a send packet
+	 * @param message
 	 */
-	private void printReceivedPacketInfo() {
-		System.out.println("<- Scheduler: Received Packet");
-		System.out.println("<- Sender Address: " + receivePacket.getAddress());
-		System.out.println("<- Sender Port: " + receivePacket.getPort());
-		System.out.print("<- Data (byte): ");
-		for (byte b: receivePacket.getData()) {
+	private void createPacket(byte[] message) {
+		try {
+			
+			// Initialize and create a send packet
+			sendPacket = new DatagramPacket(message, message.length, InetAddress.getLocalHost(), ELEVATOR_RECEIVE_PORT);
+			
+		} catch (UnknownHostException e) {
+			
+			// Display an error message if the packet cannot be created.
+			// Terminate the program.
+			System.out.println("Error: Scheduler could not create packet.");
+			System.exit(1);
+		}
+	}
+	
+	/**
+	 * Method to send the packet to the scheduler
+	 */
+	private void sendPacket() {
+		try {
+			
+			// Send the packet
+			sendSocket.send(sendPacket);
+		} catch (IOException e) {
+			
+			// Display an error message if the packet cannot be sent.
+			// Terminate the program.
+			System.out.println("Error: Scheduler could not send the packet.");
+			System.exit(1);
+		}
+	}
+	
+	private void sendPacketToElevator() {
+		this.createPacket(receivePacket.getData());
+		this.printPacketInfo(true);
+		this.sendPacket();
+	}
+	
+	private void printPacketInfo(boolean sending) {
+		String symbol = sending ? "->" : "<-";
+		String title = sending ? "sending" : "receiving";
+		DatagramPacket packetInfo = sending ? sendPacket : receivePacket;
+		System.out.println(symbol + " Scheduler: " + title + " Packet");
+		System.out.println(symbol + " Address: " + packetInfo.getAddress());
+		System.out.println(symbol + " Port: " + packetInfo.getPort());
+		System.out.print(symbol + " Data (byte): ");
+		for (byte b: packetInfo.getData()) {
 			System.out.print(b);
 		}
 		
-		String string = new String(receivePacket.getData());
-		System.out.print("\n<- Data (String): " + string + "\n\n");
+		String string = new String(packetInfo.getData());
+		System.out.print("\n" + symbol + " Data (String): " + string + "\n\n");
 	}
 	
 	/**
@@ -163,14 +152,18 @@ public class Scheduler implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
-			this.receivePacketFromFloor();
-			this.printReceivedPacketInfo();
-			
+			this.receivePacket(true);
+			this.printPacketInfo(false);
+			this.sendPacketToElevator();
+			this.receivePacket(false);
+			this.printPacketInfo(false);
+			System.out.println("Elevator moved to the floor");
+			System.out.println("---------------------------------------------------------------------");
 		}
-
 	}
 	
 	public static void main(String[] args) {
+		System.out.println("---- SCHEDULER SUB SYSTEM ----- \n");
 		Thread thread = new Thread(new Scheduler());
 		thread.start();
 	}

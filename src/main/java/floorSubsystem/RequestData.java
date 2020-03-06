@@ -52,10 +52,6 @@ public class RequestData {
         isGoingUp = info[2].contains("Up");
         destinationFloor = Integer.parseInt(info[3]);
     }
-    
-//    public RequestData(byte[] byte) {
-//    	
-//    }
 
     /**
      * Overloaded constructor to initialize the class variables
@@ -72,6 +68,10 @@ public class RequestData {
         this.currentFloor = currentFloor;
         this.isGoingUp = isGoingUp;
         this.destinationFloor = destinationFloor;
+    }
+    
+    public RequestData(byte[] data) {
+    	this(new String(data));
     }
 
     /**

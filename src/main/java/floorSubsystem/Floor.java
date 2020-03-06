@@ -55,10 +55,14 @@ public class Floor implements Runnable {
 	 */
 	private int totalRequests, dataReceived;
 	
-	// Packets for sending and receiving
-	private DatagramPacket sendPacket, receivePacket;
+	/**
+	 * Send packet
+	 */
+	private DatagramPacket sendPacket;
 	
-	// Socket for sending and receiving
+	/**
+	 * Socket to send packet to the scheduler
+	 */
 	private DatagramSocket socket;
 
 
@@ -189,28 +193,6 @@ public class Floor implements Runnable {
 		}
 	}
 	
-	/**
-	 * Method to receive requests from the scheduler
-	 */
-	private void checkRequestsFromScheduler() {
-//		
-//		// Get request
-//		RequestData request = scheduler.getNotifiedRequest();
-//		
-//		// If there is a request
-//		if (request != null) {
-//			
-//			// Print the request
-//			System.out.println("Floor received information from Scheduler: " + request);
-//			System.out.println("That is success #" + ++dataReceived + "/" + totalRequests + "\n");
-//			
-//			// If all the expected request are received, terminate the program.
-//			if (dataReceived == totalRequests) {
-//				System.out.println("\nSimulation complete!");
-//				System.exit(0);
-//			}
-//		}		
-	}
 
 	/**
 	 * Thread execution routine.
@@ -224,11 +206,14 @@ public class Floor implements Runnable {
 
 		// In a continuous polling loop, try sending and receiving packets to/from the
 		// scheduler till the data received is less than the total fetched requests
+		
+		// TODO: NEED TO CHANGE THE CONDITION LATER 
+		// AS THE FLOOR WILL NOT RECEIVE REQUESTS ANYMORE
 		while (dataReceived < totalRequests) {
 			try {
 				// Keep sending and receiving packets to/from the scheduler.
 				this.sendRequestPacket();
-//				this.checkRequestsFromScheduler();		
+				dataReceived++;
 			} catch (InterruptedException e) {
 				System.exit(0);
 			}
@@ -236,6 +221,7 @@ public class Floor implements Runnable {
 	}
 	
 	public static void main(String[] args) {
+		System.out.println("---- FLOOR SUB SYSTEM ----- \n");
         Thread floorThread = new Thread(new Floor());
         floorThread.start();
 	}
