@@ -27,11 +27,11 @@ class ElevatorTest {
 	 */
 	ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	PrintStream originalOut = System.out;
-	Elevator elevator;
+	ElevatorSubsystem elevatorSubSystem;
 
 	@BeforeEach
 	void setUp() throws Exception {
-		elevator = new Elevator();
+		elevatorSubSystem = new ElevatorSubsystem();
 	}
 
 	@BeforeEach
@@ -54,7 +54,7 @@ class ElevatorTest {
 
 	@Test
 	void movementTest() {
-		Thread elevatorThread = new Thread(elevator);
+		Thread elevatorThread = new Thread(elevatorSubSystem. new Elevator());
 		elevatorThread.start();
 		
 		RequestData data = new RequestData("14:05:55.0 1 Up 4");
