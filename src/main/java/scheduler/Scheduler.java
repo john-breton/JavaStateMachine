@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.*;
+
 import floorSubsystem.RequestData;
 
 /**
@@ -14,19 +15,18 @@ import floorSubsystem.RequestData;
  * scheduler is responsible for scheduling requests to ensure maximum throughput
  * and minimize waiting time.
  * 
- * For Iteration 3: The scheduler receives request from the floor and requests
- * the states of all elevators from the ElevatorSubsystem. Based on the
- * information returned, the scheduler will grab the appropriate work queue from
- * the elevator and insert the pending request into the most appropriate
- * position in the work queue.
+ * For Iteration 3: The scheduler receives request from the FloorSubsystem and
+ * requests the states of all elevators from the ElevatorSubsystem. Based on the
+ * information returned, the scheduler will send information to the
+ * ElevatorSubsystem that can be used to insert the .
  * 
  * @author John Breton, Shoaib Khan
  * @version Iteration 3 - March 6th, 2020
  */
 public class Scheduler implements Runnable {
-    
+
     /**
-     * An enumeration representing the current state of the scheduler. 
+     * An enumeration representing the possible states of the Scheduler.
      * 
      * @author John Breton
      * @version Iteration 3 - March 6th, 2020
@@ -34,13 +34,14 @@ public class Scheduler implements Runnable {
     private enum State {
         IDLE, SCHEDULING;
     }
-    
+
     /**
-     * Constants used for UDP communication between the 3 programs. 
+     * Constants used for UDP communication between the 3 programs.
      */
     private static final int FLOOR_SEND_PORT = 23;
     private static final int ELEVATOR_RECEIVE_PORT = 60;
     private static final int ELEVATOR_SEND_PORT = 61;
+    private static final int ELEVATOR_REPLY_PORT = 62;
     private static final int DATA_SIZE = 26;
 
     /**
@@ -52,14 +53,21 @@ public class Scheduler implements Runnable {
      * Notification request to store request from the elevator.
      */
     private RequestData notifiedRequest;
-    
+
+    /**
+     * Used to capture the state of the Scheduler.
+     */
     private static State state;
 
-    // Packets for sending and receiving
-    private DatagramPacket sendPacket, receiveFloorPacket, receiveElevatorPacket;
+    /**
+     * Packets used for sending and receiving data via UDP communication.
+     */
+    private DatagramPacket sendPacket, receiveFloorPacket, receiveElevatorPacket, receiveElevatorInfo;
 
-    // Sockets for sending and receiving
-    private DatagramSocket floorSocketReceiver, elevatorSocketReceiver, sendSocket;
+    /**
+     * Sockets used for sending and receiving data via UDP communication.
+     */
+    private DatagramSocket floorSocketReceiver, elevatorSocketReceiver, elevatorSocketReplier, sendSocket;
 
     /**
      * Default constructor to initialize the class variables.
@@ -71,23 +79,25 @@ public class Scheduler implements Runnable {
         try {
             floorSocketReceiver = new DatagramSocket(FLOOR_SEND_PORT);
             elevatorSocketReceiver = new DatagramSocket(ELEVATOR_SEND_PORT);
+            elevatorSocketReplier = new DatagramSocket(ELEVATOR_REPLY_PORT);
             sendSocket = new DatagramSocket();
         } catch (SocketException e) {
             System.out.println("Error: SchedulerSubSystem cannot be initialized.");
             System.exit(1);
         }
     }
-    
+
     /**
      * Advances the scheduler to the next state.
      */
     private void goToNextState() {
-        if (getState().ordinal() == 1) 
+        if (getState().ordinal() == 1)
             state = State.IDLE;
         else
             state = State.SCHEDULING;
+        System.out.println("State has been updated to: " + getState());
     }
-    
+
     /**
      * Get the current state of the scheduler.
      * 
@@ -98,8 +108,11 @@ public class Scheduler implements Runnable {
     }
 
     /**
+     * Receive a DatagramPacket from either the ElevatorSubsystem or the
+     * FloorSubsystem.
      * 
-     * @param fromFloor
+     * @param fromFloor True if the DatagramPacket is originating from the
+     *                  FloorSubsystem, false otherwise.
      */
     private void receivePacket(boolean fromFloor) {
         byte[] request = new byte[DATA_SIZE];
@@ -125,9 +138,9 @@ public class Scheduler implements Runnable {
     }
 
     /**
-     * Method to create a send packet
+     * Routine to create a DatagramPacket that will be sent.
      * 
-     * @param message
+     * @param message The byte[] data the DatagramPacket will contain.
      */
     private void createPacket(byte[] message) {
         try {
@@ -145,9 +158,12 @@ public class Scheduler implements Runnable {
     }
 
     /**
-     * Method to send the packet to the scheduler
+     * Routine to send a DatagramPacket to the ElevatorSubsystem. This
+     * DatagramPacket will contain information that the ElevatorSubsystem will use
+     * to decide which Elevator should receive the packet.
      */
-    private void sendPacket() {
+    private void sendPacketToElevator() {
+        printPacketInfo(true, 3);
         try {
 
             // Send the packet
@@ -162,32 +178,28 @@ public class Scheduler implements Runnable {
     }
 
     /**
+     * Print the information contained within a particular DatagramPacket.
      * 
-     */
-    private void sendPacketToElevator() {
-        createPacket(receiveFloorPacket.getData());
-        printPacketInfo(true, 3);
-        sendPacket();
-    }
-
-    /**
-     * 
-     * @param sending
-     * @param fromWhere
+     * @param sending   True if we are sending the DatagramPacket, false if we
+     *                  received the DatagramPacket.
+     * @param fromWhere 1 if the DatagramPacket originated from the
+     *                  ElevatorSubsystem, 2 if the DatagramPacket originated from
+     *                  the FloorSubsystem, 3 if the DatagramPacket is being sent
+     *                  (sending must also be true).
      */
     private void printPacketInfo(boolean sending, int fromWhere) {
         String symbol = sending ? "->" : "<-";
         String title = sending ? "sending" : "receiving";
         DatagramPacket packetInfo = null;
-        switch(fromWhere) {
-            case 1:
-                packetInfo = receiveElevatorPacket;
-                break;
-            case 2:
-                packetInfo = receiveFloorPacket;
-                break;
-            case 3:
-                packetInfo = sendPacket;
+        switch (fromWhere) {
+        case 1:
+            packetInfo = receiveElevatorPacket;
+            break;
+        case 2:
+            packetInfo = receiveFloorPacket;
+            break;
+        case 3:
+            packetInfo = sendPacket;
         }
         System.out.println(symbol + " Scheduler: " + title + " Packet");
         System.out.println(symbol + " Address: " + packetInfo.getAddress());
@@ -198,15 +210,23 @@ public class Scheduler implements Runnable {
 
         System.out.print("\n" + symbol + " Data (String): " + new String(packetInfo.getData()) + "\n\n");
     }
-    
-    
+
+    /**
+     * 
+     * @param work
+     */
     private synchronized void addToWorkQueue(DatagramPacket work) {
         workQueue.add(work);
         notifyAll();
     }
-    
+
+    /**
+     * Check to see if there are any requests that must be scheduled.
+     * 
+     * @return The next request to be scheduled, as a DatagramPacket.
+     */
     private synchronized DatagramPacket checkWork() {
-        if(workQueue.isEmpty()) {
+        if (workQueue.isEmpty()) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -215,14 +235,22 @@ public class Scheduler implements Runnable {
         }
         return workQueue.pop();
     }
-    
+
+    /**
+     * Sends a request for status to the ElevatorSubsystem.
+     * 
+     * @return A DatagramPacket containing the information for all Elevators.
+     */
     private DatagramPacket sendStatusRequest() {
         byte[] request = new byte[1];
-        request[0] = 0b1;
+        request[0] = 0b0;
         createPacket(request);
         try {
             // Send the packet
             sendSocket.send(sendPacket);
+            // Wait for a reply
+            elevatorSocketReplier.receive(receiveElevatorInfo);
+            return receiveElevatorInfo;
         } catch (IOException e) {
             // Display an error message if the packet cannot be sent.
             // Terminate the program.
@@ -230,34 +258,61 @@ public class Scheduler implements Runnable {
             System.exit(1);
         }
         return null;
+
+    }
+
+    /**
+     * Schedule the request by determining the best elevator to send the request to.
+     * 
+     * @param work         The current request that is being scheduled.
+     * @param elevatorInfo The statuses of all the elevators.
+     * @return A DatagramPacket that contains the request, along with the
+     *         information as to which Elevator the request will be added to, and if
+     *         it should do at the front of the back of the workQueue.
+     */
+    private DatagramPacket schedule(DatagramPacket work, DatagramPacket elevatorInfo) {
+        // Progress the state of the Scheduler to indicate that we are currently
+        // scheduling a request.
+        goToNextState();
         
+        
+        byte[] nextReq = work.getData();
+        String[] requestInfo = new String(work.getData()).split(" ");
+        String[] elevatorStatuses = new String(elevatorInfo.getData()).split(" ");
+
+        // We are done scheduling, so the Scheduler state should indicate that it is no
+        // longer scheduling.
+        goToNextState();
+        return null;
     }
 
     /**
      * Thread execution routine.
      */
-    @Override 
+    @Override
     public void run() {
         if (Thread.currentThread().getName().equals("F2E"))
             // Main routine to receive request information from the FloorSubsystem.
             while (true) {
-                this.receivePacket(true);
-                this.printPacketInfo(false, 2);
+                receivePacket(true);
+                printPacketInfo(false, 2);
                 addToWorkQueue(receiveFloorPacket);
             }
         else if (Thread.currentThread().getName().equals("E2S"))
             while (true) {
-                this.receivePacket(false);
-                this.printPacketInfo(false, 1);
+                // Main routine to receive confirmation from 
+                receivePacket(false);
+                printPacketInfo(false, 1);
                 System.out.println("Elevator moved to the floor");
                 System.out.println("---------------------------------------------------------------------");
             }
         else
-            while(true) {
+            while (true) {
                 DatagramPacket work = checkWork();
                 // If we get here, we have work we can do!
-                this.sendStatusRequest();
-                //this.sendPacketToElevator();
+                DatagramPacket elevatorInfo = this.sendStatusRequest();
+                sendPacket = schedule(work, elevatorInfo);
+                sendPacketToElevator();
             }
     }
 
