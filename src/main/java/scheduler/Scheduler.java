@@ -8,7 +8,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.*;
 
-import elevatorSubsystem.Elevator;
 import floorSubsystem.RequestData;
 
 /**
@@ -258,8 +257,8 @@ public class Scheduler implements Runnable {
             while(true) {
                 DatagramPacket work = checkWork();
                 // If we get here, we have work we can do!
-                this.sendStatusRequest();
-                //this.sendPacketToElevator();
+                //this.sendStatusRequest();
+                this.sendPacketToElevator();
             }
     }
 
