@@ -111,8 +111,12 @@ public class ElevatorSubsystem {
 		try {
 			// Receive a packet
 			receiveSocket.receive(receivePacket);
-			if(receivePacket.getData()[0] == (byte) 1) {
+			if((receivePacket.getData()[0] == (byte) 1) && (receivePacket.getData().length==1)) {
 				 statusPacket = getStatusPacket();
+				
+			}else {
+				int elevatorNum = receivePacket.getData()[0];
+				int workQueueIndex = receivePacket.getData()[2];
 				
 			}
 //			this.printPacketInfo(false);
@@ -489,10 +493,10 @@ public class ElevatorSubsystem {
 	            currentRequest = workQueue.pop();
 	            System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
 	            System.out.println(toString());
-	            if (this.moveFloors()) {
-	                System.out.println();
-	                this.sendPacketToScheduler();
-	            }
+//	            if (this.moveFloors()) {
+//	                System.out.println();
+//	                this.sendPacketToScheduler();
+//	            }
 	        }
 	    }
 
@@ -502,7 +506,6 @@ public class ElevatorSubsystem {
 	    @Override
 	    public void run() {
 	        while (true) {
-	            this.receivePacketFromScheduler();
 	            this.doWork();
 	            System.out.println("---------------------------------------------------------------------");
 	        }
