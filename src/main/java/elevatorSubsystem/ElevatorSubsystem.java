@@ -88,6 +88,7 @@ public class ElevatorSubsystem {
 	private void sendStatusPacket() {
 		try {
 
+			System.out.println(statusPacket);
 			// Send the packet
 			sendSocket.send(statusPacket);
 		} catch (IOException e) {
@@ -111,8 +112,9 @@ public class ElevatorSubsystem {
 		try {
 			// Receive a packet
 			receiveSocket.receive(receivePacket);
-			if((receivePacket.getData()[0] == (byte) 1) && (receivePacket.getData().length==1)) {
-				 statusPacket = getStatusPacket();
+			System.out.println(receivePacket.getData().length);
+			if(receivePacket.getData()[0] == 0) {
+				 createPacket(getStatusPacket());
 				
 			}else {
 				int elevatorNum = receivePacket.getData()[0];
@@ -133,9 +135,9 @@ public class ElevatorSubsystem {
 	/**
 	 * Method to make status packet
 	 */
-	private DatagramPacket getStatusPacket() {
+	private byte[] getStatusPacket() {
 				
-		try {
+//		try {
 			ArrayList<Byte> d = new ArrayList<Byte>();
 			//Add all the states
 			for(Elevator ev: elevators) {
@@ -149,8 +151,11 @@ public class ElevatorSubsystem {
 				
 			}
 			
+			
 			for(Elevator ev: elevators) {
-				d.add((byte) ev.getDestinationFloor());	
+//				if(ev.getDestinationFloor()) {
+				d.add((byte) ev.getDestinationFloor());
+//				}
 			}
 			
 			byte[] s = new byte[d.size()];
@@ -159,18 +164,19 @@ public class ElevatorSubsystem {
 				s[i] = (byte) d.get(i);
 			}
             // Initialize and create a send packet
-             DatagramPacket ans = new DatagramPacket(s, s.length, InetAddress.getLocalHost(),
-                    SCHEDULER_SEND_PORT);
-            return ans;
+//             DatagramPacket ans = new DatagramPacket(s, s.length, InetAddress.getLocalHost(),
+//                    SCHEDULER_RECEIVE_PORT);
+			System.out.println(s);
+            return s;
 
-        } catch (UnknownHostException e) {
+//        } catch (UnknownHostException e) {
 
             // Display an error message if the packet cannot be created.
             // Terminate the program.
-            System.out.println("Error: Elevator could not create packet.");
-            System.exit(1);
-        }
-		return null ;
+//            System.out.println("Error: Elevator could not create packet.");
+//            System.exit(1);
+//        }
+//		return new byte[] {3} ;
 	}
 
 	private void printPacketInfo(boolean sending) {
@@ -507,7 +513,7 @@ public class ElevatorSubsystem {
 	    public void run() {
 	        while (true) {
 	            this.doWork();
-	            System.out.println("---------------------------------------------------------------------");
+//	            System.out.println("---------------------------------------------------------------------");
 	        }
 	    }
 	}
@@ -525,7 +531,7 @@ public class ElevatorSubsystem {
         System.out.println("---- ELEVATOR SUB SYSTEM ----- \n");
         ElevatorSubsystem test = new ElevatorSubsystem();
         test.receivePacketFromScheduler();
-        test.sendStatusPacket();
+        test.sendPacket();
 //        Thread elevator1 = new Thread(test.new Elevator());
 //        Thread elevator2 = new Thread(test.new Elevator());
 //        elevator1.start();
