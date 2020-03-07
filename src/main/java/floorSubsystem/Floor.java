@@ -16,12 +16,12 @@ import timer.Timer;
  * a polling loop, it sends the fetched request to the scheduler. It also
  * continuously listens for any messages from the scheduler.
  * 
- * For Iteration 2, the floor will only send a request if the current amount of time matches
+ * For Iteration 3, the floor will only send a request if the current amount of time matches
  * that of the request's time-stamp. It will wait for confirmation from the scheduler that the
  * elevator actually reached the destination floor.
  * 
  * @author Shoaib Khan, John Breton
- * @version Iteration 2 - February 15th, 2020
+ * @version Iteration 3 - March 6th, 2020
  */
 public class Floor implements Runnable {
 
@@ -220,6 +220,12 @@ public class Floor implements Runnable {
 		}
 	}
 	
+	/**
+     * Entry point for the application.
+     *
+     * @param args The command-line arguments that are passed when compiling the
+     *             application.
+     */
 	public static void main(String[] args) {
 		System.out.println("---- FLOOR SUB SYSTEM ----- \n");
         Thread floorThread = new Thread(new Floor());

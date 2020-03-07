@@ -1,13 +1,12 @@
-/**
- * @author Osayimwen Justice Odia
- * @version Iteration 2 - February 15th, 2020
- */
 package timer;
 
 import java.util.Date;
 
 /**
- * An emulation of a timer in the context of the SYSC3303 Group assignment
+ * An emulation of a timer in the context of the SYSC3303 Group assignment.
+ * 
+ * @author Osayimwen Justice Odia
+ * @version Iteration 3 - March 6th, 2020
  */
 public class Timer {
 	private long time;
