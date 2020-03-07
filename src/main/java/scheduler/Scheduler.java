@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.*;
+
 import floorSubsystem.RequestData;
 
 /**
@@ -56,7 +57,7 @@ public class Scheduler implements Runnable {
     private static State state;
 
     // Packets for sending and receiving
-    private DatagramPacket sendPacket, receiveFloorPacket, receiveElevatorPacket;
+    private DatagramPacket sendPacket, receiveFloorPacket, receiveElevatorPacket, receiveElevatorInfo;
 
     // Sockets for sending and receiving
     private DatagramSocket floorSocketReceiver, elevatorSocketReceiver, sendSocket;
@@ -165,7 +166,6 @@ public class Scheduler implements Runnable {
      * 
      */
     private void sendPacketToElevator() {
-        createPacket(receiveFloorPacket.getData());
         printPacketInfo(true, 3);
         sendPacket();
     }
@@ -216,6 +216,11 @@ public class Scheduler implements Runnable {
         return workQueue.pop();
     }
     
+    /**
+     * Sends a request for status to the ElevatorSubsystem. 
+     * 
+     * @return A DatagramPacket containing the information for all Elevators. 
+     */
     private DatagramPacket sendStatusRequest() {
         byte[] request = new byte[1];
         request[0] = 0b1;
@@ -223,6 +228,9 @@ public class Scheduler implements Runnable {
         try {
             // Send the packet
             sendSocket.send(sendPacket);
+            // Wait for a reply
+            elevatorSocketReceiver.receive(receiveElevatorInfo);
+            return receiveElevatorInfo;
         } catch (IOException e) {
             // Display an error message if the packet cannot be sent.
             // Terminate the program.
@@ -231,6 +239,17 @@ public class Scheduler implements Runnable {
         }
         return null;
         
+    }
+    
+    /**
+     * 
+     * @param work
+     * @param elevatorInfo
+     * @return
+     */
+    private DatagramPacket schedule(DatagramPacket work, DatagramPacket elevatorInfo) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
@@ -256,8 +275,9 @@ public class Scheduler implements Runnable {
             while(true) {
                 DatagramPacket work = checkWork();
                 // If we get here, we have work we can do!
-                //this.sendStatusRequest();
-                this.sendPacketToElevator();
+                DatagramPacket elevatorInfo = this.sendStatusRequest();
+                sendPacket = schedule(work, elevatorInfo);
+                sendPacketToElevator();
             }
     }
 
