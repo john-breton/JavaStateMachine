@@ -23,12 +23,12 @@ import floorSubsystem.RequestData;
  * @version Iteration 3 - March 6th, 2020
  */
 public class Elevator implements Runnable {
-	
-	private enum State {
-        IDLE, MOVINGUP,MOVINGDOWN,ARRIVED;
+
+    private enum State {
+        IDLE, MOVINGUP, MOVINGDOWN, ARRIVED;
     }
-	
-	private static State state;
+
+    private static State state;
 
     /**
      * The queue used to keep track of the work for the Elevator.
@@ -49,7 +49,7 @@ public class Elevator implements Runnable {
     private static final double TIME_PER_FLOOR = 1;
 
     private static final int SCHEDULER_SEND_PORT = 60;
-    
+
     private static final int SCHEDULER_RECEIVE_PORT = 61;
 
     private static final int DATA_SIZE = 26;
@@ -58,9 +58,6 @@ public class Elevator implements Runnable {
     private DatagramPacket sendPacket, receivePacket;
 
     private DatagramSocket receiveSocket, sendSocket;
-	
-    
-    
 
     /**
      * Construct a new Elevator.
@@ -86,27 +83,24 @@ public class Elevator implements Runnable {
     public void addToQueue(RequestData requestData) {
         workQueue.add(requestData);
     }
-    
+
     /**
      * Advances the elevator to the next state.
      */
     private void goToNextState() {
-    	
-        if (getState()== State.ARRIVED) 
+
+        if (getState() == State.ARRIVED)
             state = State.IDLE;
         else if (getState() == State.IDLE) {
-        	state = State.MOVINGUP;
+            state = State.MOVINGUP;
+        } else if (getState() == State.MOVINGUP) {
+            state = State.MOVINGDOWN;
+        } else if (getState() == State.MOVINGDOWN) {
+            state = State.ARRIVED;
         }
-        else if (getState() == State.MOVINGUP) {
-        	state = State.MOVINGDOWN;
-        }
-        else if (getState() == State.MOVINGDOWN) {
-        	state = State.ARRIVED;
-        }
-        
-            
+
     }
-    
+
     /**
      * Get the current state of the elevator.
      * 
