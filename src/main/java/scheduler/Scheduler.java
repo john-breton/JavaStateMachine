@@ -27,27 +27,33 @@ import floorSubsystem.RequestData;
  */
 public class Scheduler implements Runnable {
     
+    /**
+     * An enumeration representing the current state of the scheduler. 
+     * 
+     * @author John Breton
+     * @version Iteration 3 - March 6th, 2020
+     */
     private enum State {
         IDLE, SCHEDULING;
     }
-
+    
     /**
-     * Deque to store all the requests
+     * Constants used for UDP communication between the 3 programs. 
      */
-    private Deque<RequestData> requestData;
+    private static final int FLOOR_SEND_PORT = 23;
+    private static final int ELEVATOR_RECEIVE_PORT = 60;
+    private static final int ELEVATOR_SEND_PORT = 61;
+    private static final int DATA_SIZE = 26;
 
     /**
-     * Notification request to store request from the elevator
+     * Deque to store all the requests.
+     */
+    private Deque<DatagramPacket> workQueue;
+
+    /**
+     * Notification request to store request from the elevator.
      */
     private RequestData notifiedRequest;
-
-    private static final int FLOOR_SEND_PORT = 23;
-
-    private static final int ELEVATOR_RECEIVE_PORT = 60;
-
-    private static final int ELEVATOR_SEND_PORT = 61;
-
-    private static final int DATA_SIZE = 26;
     
     private static State state;
 
@@ -61,7 +67,7 @@ public class Scheduler implements Runnable {
      * Default constructor to initialize the class variables.
      */
     public Scheduler() {
-        requestData = new ArrayDeque<>();
+        workQueue = new ArrayDeque<>();
         notifiedRequest = null;
         state = State.IDLE;
         try {
@@ -69,14 +75,25 @@ public class Scheduler implements Runnable {
             elevatorSocketReceiver = new DatagramSocket(ELEVATOR_SEND_PORT);
             sendSocket = new DatagramSocket();
         } catch (SocketException e) {
-            System.out.println("Error: Scheduler sub system cannot be initialized.");
+            System.out.println("Error: SchedulerSubSystem cannot be initialized.");
             System.exit(1);
         }
     }
     
     /**
+     * Advances the scheduler to the next state.
+     */
+    private void goToNextState() {
+        if (getState().ordinal() == 1) 
+            state = State.IDLE;
+        else
+            state = State.SCHEDULING;
+    }
+    
+    /**
+     * Get the current state of the scheduler.
      * 
-     * @return
+     * @return The current state of the scheduler.
      */
     private State getState() {
         return state;
@@ -150,14 +167,15 @@ public class Scheduler implements Runnable {
      * 
      */
     private void sendPacketToElevator() {
-        this.createPacket(receiveFloorPacket.getData());
-        this.printPacketInfo(true, 3);
-        this.sendPacket();
+        createPacket(receiveFloorPacket.getData());
+        printPacketInfo(true, 3);
+        sendPacket();
     }
 
     /**
      * 
      * @param sending
+     * @param fromWhere
      */
     private void printPacketInfo(boolean sending, int fromWhere) {
         String symbol = sending ? "->" : "<-";
@@ -182,24 +200,66 @@ public class Scheduler implements Runnable {
 
         System.out.print("\n" + symbol + " Data (String): " + new String(packetInfo.getData()) + "\n\n");
     }
+    
+    
+    private synchronized void addToWorkQueue(DatagramPacket work) {
+        workQueue.add(work);
+        notifyAll();
+    }
+    
+    private synchronized DatagramPacket checkWork() {
+        if(workQueue.isEmpty()) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return workQueue.pop();
+    }
+    
+    private DatagramPacket sendStatusRequest() {
+        byte[] request = new byte[1];
+        request[0] = 0b1;
+        createPacket(request);
+        try {
+            // Send the packet
+            sendSocket.send(sendPacket);
+        } catch (IOException e) {
+            // Display an error message if the packet cannot be sent.
+            // Terminate the program.
+            System.out.println("Error: Scheduler could not send the packet.");
+            System.exit(1);
+        }
+        return null;
+        
+    }
 
     /**
      * Thread execution routine.
      */
-    @Override
+    @Override 
     public void run() {
         if (Thread.currentThread().getName().equals("F2E"))
+            // Main routine to receive request information from the FloorSubsystem.
             while (true) {
                 this.receivePacket(true);
                 this.printPacketInfo(false, 2);
-                this.sendPacketToElevator();
+                addToWorkQueue(receiveFloorPacket);
             }
-        else
+        else if (Thread.currentThread().getName().equals("E2S"))
             while (true) {
                 this.receivePacket(false);
                 this.printPacketInfo(false, 1);
                 System.out.println("Elevator moved to the floor");
                 System.out.println("---------------------------------------------------------------------");
+            }
+        else
+            while(true) {
+                DatagramPacket work = checkWork();
+                // If we get here, we have work we can do!
+                this.sendStatusRequest();
+                //this.sendPacketToElevator();
             }
     }
 
@@ -214,9 +274,12 @@ public class Scheduler implements Runnable {
         System.out.println("---- SCHEDULER SUB SYSTEM ----- \n");
         Thread elevatorToScheduler = new Thread(scheduler);
         Thread floorToElevator = new Thread(scheduler);
+        Thread workThread = new Thread(scheduler);
         floorToElevator.setName("F2E");
         elevatorToScheduler.setName("E2S");
+        workThread.setName("Worker");
         floorToElevator.start();
         elevatorToScheduler.start();
+        workThread.start();
     }
 }
