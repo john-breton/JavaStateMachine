@@ -249,6 +249,8 @@ public class Scheduler implements Runnable {
             // Send the packet
             sendSocket.send(sendPacket);
             // Wait for a reply
+            byte[] longMessage = new byte[1000];
+            receiveElevatorInfo = new DatagramPacket(longMessage, longMessage.length, InetAddress.getLocalHost(), ELEVATOR_REPLY_PORT);
             elevatorSocketReplier.receive(receiveElevatorInfo);
             return receiveElevatorInfo;
         } catch (IOException e) {
@@ -275,10 +277,20 @@ public class Scheduler implements Runnable {
         // scheduling a request.
         goToNextState();
         
-        
         byte[] nextReq = work.getData();
         String[] requestInfo = new String(work.getData()).split(" ");
-        String[] elevatorStatuses = new String(elevatorInfo.getData()).split(" ");
+        String[] elevatorStatuses = new String(elevatorInfo.getData()).split("-");
+        int numElevators = elevatorStatuses.length;
+        
+        boolean requestDirection = requestInfo[2].equals("Up") ? true : false;
+        int startFloor = Integer.parseInt(requestInfo[1]);
+        int destinationFloor = Integer.parseInt(requestInfo[3]);
+        
+        int numberIdle = 0;
+        
+        
+        
+        
 
         // We are done scheduling, so the Scheduler state should indicate that it is no
         // longer scheduling.
