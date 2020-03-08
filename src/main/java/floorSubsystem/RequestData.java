@@ -69,6 +69,10 @@ public class RequestData {
         this.isGoingUp = isGoingUp;
         this.destinationFloor = destinationFloor;
     }
+    
+    public RequestData(byte[] data) {
+    	this(new String(data));
+    }
 
     /**
      * Return time of the request
@@ -105,6 +109,40 @@ public class RequestData {
      */
     public int getDestinationFloor() {
         return destinationFloor;
+    }
+    
+    public byte[] toBytes() {
+    	byte[] bytes = new byte[26];
+    	int counter = 0;
+    	
+    	for (byte b: time.getBytes()) {
+    		bytes[counter++] = b;
+    	}    	
+    	bytes[counter++] = (byte) ' ';
+    	
+    	String curFloor = currentFloor + "";
+    	for (byte b: curFloor.getBytes()) {
+    		bytes[counter++] = b;
+    	}
+    	bytes[counter++] = (byte) ' ';
+    	
+    	String direction = isGoingUp ? "Up" : "Down";
+    	for (byte b: direction.getBytes()) {
+    		bytes[counter++] = b;
+    	}
+    	bytes[counter++] = (byte) ' ';
+    	
+    	String destFloor = destinationFloor + "";
+    	for (byte b: destFloor.getBytes()) {
+    		bytes[counter++] = b;
+    	}
+    	bytes[counter++] = (byte) ' ';
+    	
+    	return bytes;
+    }
+    
+    public String getSimpleForm() {
+    	return "[" + currentFloor + " " + (isGoingUp ? "UP" : "DOWN") + " " + destinationFloor + "]";
     }
 
     /**

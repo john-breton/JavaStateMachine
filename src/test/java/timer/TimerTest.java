@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * @author John Breton
- * @version Iteration 2 - February 15th, 2020
+ * @version Iteration 3 - March 7th, 2020
  */
 
 public class TimerTest {
@@ -63,15 +63,15 @@ public class TimerTest {
 		// Check that the timer has registered that a second has passed.
 		assertTrue(timer.itsTime(0, 0, 1, 0));
 
-		// Repeat the above procedure for 5 seconds (5 + 1 = 6 seconds total).
-		assertFalse(timer.itsTime(0, 0, 6, 0));
+		// Repeat the above procedure for 3 seconds (1 + 1 = 2 seconds total).
+		assertFalse(timer.itsTime(0, 0, 2, 0));
 		
 		try {
-			TimeUnit.SECONDS.sleep(5);
+			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		assertTrue(timer.itsTime(0, 0, 6, 0));
+		assertTrue(timer.itsTime(0, 0, 2, 0));
 	}
 
 }
