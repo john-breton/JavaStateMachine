@@ -140,6 +140,10 @@ public class RequestData {
     	
     	return bytes;
     }
+    
+    public String getSimpleForm() {
+    	return "[" + currentFloor + " " + (isGoingUp ? "UP" : "DOWN") + " " + destinationFloor + "]";
+    }
 
     /**
      * Return the RequestData as a human readable formatted string.

@@ -38,41 +38,31 @@ public class Elevator implements Runnable {
     /**
      * The current request the Elevator is handling.
      */
-    private RequestData currentRequest;
+    protected RequestData currentRequest;
 
     /**
      * Experimental value for iteration 2. Value taken from iteration 0 calculations
      * Time it takes to move 1 floor at full acceleration
      * 
      */
-
     private static final double TIME_PER_FLOOR = 1;
 
-    private static final int SCHEDULER_SEND_PORT = 60;
-
-    private static final int SCHEDULER_RECEIVE_PORT = 61;
-
     private static final int DATA_SIZE = 26;
-
-    // Packets for sending and receiving
-    private DatagramPacket sendPacket, receivePacket;
-
-    private DatagramSocket receiveSocket, sendSocket;
+    
+    private int currentFloor; 
 
     /**
      * Construct a new Elevator.
      */
     public Elevator() {
         state = State.IDLE;
+        currentFloor = 0;
         workQueue = new ArrayDeque<RequestData>();
-
-        try {
-            receiveSocket = new DatagramSocket(SCHEDULER_SEND_PORT);
-            sendSocket = new DatagramSocket();
-        } catch (SocketException e) {
-            System.out.println("Error: Scheduler sub system cannot be initialized.");
-            System.exit(1);
-        }
+        
+        // To test
+        // Add data in the work queue
+        // workQueue.add(new RequestData("14:05:15.0 2 Up 4"));
+        // workQueue.add(new RequestData("14:05:25.0 4 Down 3"));
     }
 
     /**
@@ -82,6 +72,30 @@ public class Elevator implements Runnable {
      */
     public void addToQueue(RequestData requestData) {
         workQueue.add(requestData);
+    }
+    
+    public String getStatus() {
+    	String status;
+    	status = state.toString() + "|";
+    	status += currentFloor + "|";
+    	
+    	if(currentRequest != null) {
+    		status += currentRequest.getDestinationFloor() + "|";
+    	}
+    	
+    	else {
+    		status += "0|"; 
+    	}
+    	
+    	for (RequestData data: workQueue) {
+    		status += data.getSimpleForm();
+    	}
+    	
+    	if (workQueue.isEmpty()) {
+    		status += "empty";
+    	}
+    	
+    	return status;
     }
 
     /**
@@ -106,7 +120,7 @@ public class Elevator implements Runnable {
      * 
      * @return The current state of the elevator.
      */
-    private State getState() {
+    public State getState() {
         return state;
     }
 
@@ -164,87 +178,10 @@ public class Elevator implements Runnable {
         }
     }
 
-    private void receivePacketFromScheduler() {
-        byte[] request = new byte[DATA_SIZE];
-        receivePacket = new DatagramPacket(request, request.length);
-        try {
-            // Receive a packet
-            receiveSocket.receive(receivePacket);
-            this.printPacketInfo(false);
-            this.addRequestToQueue();
-        } catch (IOException e) {
-
-            // Display an error if the packet cannot be received
-            // Terminate the program
-            System.out.println("Error: Elevator cannot receive packet.");
-            System.exit(1);
-        }
-    }
-
-    private void printPacketInfo(boolean sending) {
-        String symbol = sending ? "->" : "<-";
-        String title = sending ? "sending" : "receiving";
-        DatagramPacket packetInfo = sending ? sendPacket : receivePacket;
-        System.out.println(symbol + " Scheduler: " + title + " Packet");
-        System.out.println(symbol + " Address: " + packetInfo.getAddress());
-        System.out.println(symbol + " Port: " + packetInfo.getPort());
-        System.out.print(symbol + " Data (byte): ");
-        for (byte b : packetInfo.getData()) {
-            System.out.print(b);
-        }
-
-        String string = new String(packetInfo.getData());
-        System.out.print("\n" + symbol + " Data (String): " + string + "\n\n");
-    }
-
-    private void addRequestToQueue() {
-        RequestData data = new RequestData(receivePacket.getData());
-        this.workQueue.add(data);
-    }
-
-    /**
-     * Method to create a send packet
-     * 
-     * @param message
-     */
-    private void createPacket(byte[] message) {
-        try {
-
-            // Initialize and create a send packet
-            sendPacket = new DatagramPacket(message, message.length, InetAddress.getLocalHost(),
-                    SCHEDULER_RECEIVE_PORT);
-
-        } catch (UnknownHostException e) {
-
-            // Display an error message if the packet cannot be created.
-            // Terminate the program.
-            System.out.println("Error: Elevator could not create packet.");
-            System.exit(1);
-        }
-    }
-
-    /**
-     * Method to send the packet to the scheduler
-     */
-    private void sendPacket() {
-        try {
-
-            // Send the packet
-            sendSocket.send(sendPacket);
-        } catch (IOException e) {
-
-            // Display an error message if the packet cannot be sent.
-            // Terminate the program.
-            System.out.println("Error: Elevator could not send the packet.");
-            System.exit(1);
-        }
-    }
-
-    private void sendPacketToScheduler() {
-        this.createPacket(receivePacket.getData());
-        this.printPacketInfo(true);
-        this.sendPacket();
-    }
+//    private void addRequestToQueue(RquestData data) {
+//        RequestData data = new RequestData(receivePacket.getData());
+//        this.workQueue.add(data);
+//    }
 
     /**
      * Return the current movement of the Elevator, as a String.
@@ -266,7 +203,6 @@ public class Elevator implements Runnable {
             System.out.println(toString());
             if (this.moveFloors()) {
                 System.out.println();
-                this.sendPacketToScheduler();
             }
         }
     }
@@ -276,10 +212,10 @@ public class Elevator implements Runnable {
      */
     @Override
     public void run() {
-        while (true) {
-            this.receivePacketFromScheduler();
-            this.doWork();
-            System.out.println("---------------------------------------------------------------------");
-        }
+//        while (true) {
+//            this.receivePacketFromScheduler();
+//            this.doWork();
+//            System.out.println("---------------------------------------------------------------------");
+//        }
     }
 }

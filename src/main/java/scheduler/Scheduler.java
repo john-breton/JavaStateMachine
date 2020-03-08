@@ -239,8 +239,8 @@ public class Scheduler implements Runnable {
      * @return A DatagramPacket containing the information for all Elevators.
      */
     private DatagramPacket sendStatusRequest() {
-        byte[] request = new byte[1];
-        request[0] = 0b1;
+        byte[] request = new byte[DATA_SIZE];
+        request = "Status".getBytes();
         createPacket(request);
         try {
             // Send the packet
@@ -269,8 +269,7 @@ public class Scheduler implements Runnable {
         goToNextState();
         byte[] nextReq = work.getData();
         String[] requestInfo = new String(work.getData()).split(" ");
-        String[] elevatorStatuses = new String(elevatorInfo.getData()).split(" "));
-        
+        String[] elevatorStatuses = new String(elevatorInfo.getData()).split(" ");
         return null;
     }
 
