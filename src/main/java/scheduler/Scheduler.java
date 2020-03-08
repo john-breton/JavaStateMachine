@@ -41,6 +41,7 @@ public class Scheduler implements Runnable {
     private static final int FLOOR_SEND_PORT = 23;
     private static final int ELEVATOR_RECEIVE_PORT = 60;
     private static final int ELEVATOR_SEND_PORT = 61;
+    private static final int ELEVATOR_REPLY_PORT = 62;
     private static final int DATA_SIZE = 26;
 
     /**
@@ -66,7 +67,7 @@ public class Scheduler implements Runnable {
     /**
      * Sockets used for sending and receiving data via UDP communication.
      */
-    private DatagramSocket floorSocketReceiver, elevatorSocketReceiver, sendSocket;
+    private DatagramSocket floorSocketReceiver, elevatorSocketReceiver, elevatorSocketReplier, sendSocket;
 
     /**
      * Default constructor to initialize the class variables.
@@ -78,6 +79,7 @@ public class Scheduler implements Runnable {
         try {
             floorSocketReceiver = new DatagramSocket(FLOOR_SEND_PORT);
             elevatorSocketReceiver = new DatagramSocket(ELEVATOR_SEND_PORT);
+            elevatorSocketReplier = new DatagramSocket(ELEVATOR_REPLY_PORT);
             sendSocket = new DatagramSocket();
         } catch (SocketException e) {
             System.out.println("Error: SchedulerSubSystem cannot be initialized.");
@@ -156,9 +158,9 @@ public class Scheduler implements Runnable {
     }
 
     /**
-     * Routine to send a DatagramPacket to the ElevatorSubsystem. This DatagramPacket
-     * will contain information that the ElevatorSubsystem will use to decide which
-     * Elevator should receive the packet.
+     * Routine to send a DatagramPacket to the ElevatorSubsystem. This
+     * DatagramPacket will contain information that the ElevatorSubsystem will use
+     * to decide which Elevator should receive the packet.
      */
     private void sendPacketToElevator() {
         printPacketInfo(true, 3);
@@ -219,8 +221,9 @@ public class Scheduler implements Runnable {
     }
 
     /**
+     * Check to see if there are any requests that must be scheduled.
      * 
-     * @return
+     * @return The next request to be scheduled, as a DatagramPacket.
      */
     private synchronized DatagramPacket checkWork() {
         if (workQueue.isEmpty()) {
@@ -239,14 +242,16 @@ public class Scheduler implements Runnable {
      * @return A DatagramPacket containing the information for all Elevators.
      */
     private DatagramPacket sendStatusRequest() {
-        byte[] request = new byte[DATA_SIZE];
-        request = "Status".getBytes();
+        byte[] request = new byte[1];
+        request[0] = 0b0;
         createPacket(request);
         try {
             // Send the packet
             sendSocket.send(sendPacket);
             // Wait for a reply
-            elevatorSocketReceiver.receive(receiveElevatorInfo);
+            byte[] longMessage = new byte[1000];
+            receiveElevatorInfo = new DatagramPacket(longMessage, longMessage.length, InetAddress.getLocalHost(), ELEVATOR_REPLY_PORT);
+            elevatorSocketReplier.receive(receiveElevatorInfo);
             return receiveElevatorInfo;
         } catch (IOException e) {
             // Display an error message if the packet cannot be sent.
@@ -259,17 +264,43 @@ public class Scheduler implements Runnable {
     }
 
     /**
+     * Schedule the request by determining the best elevator to send the request to.
      * 
-     * @param work
-     * @param elevatorInfo
-     * @return
+     * @param work         The current request that is being scheduled.
+     * @param elevatorInfo The statuses of all the elevators.
+     * @return A DatagramPacket that contains the request, along with the
+     *         information as to which Elevator the request will be added to, and if
+     *         it should do at the front of the back of the workQueue.
      */
     private DatagramPacket schedule(DatagramPacket work, DatagramPacket elevatorInfo) {
-        // Progress the state of the Scheduler to indicate that we are currently scheduling a request. 
+        // Progress the state of the Scheduler to indicate that we are currently
+        // scheduling a request.
         goToNextState();
+        
         byte[] nextReq = work.getData();
         String[] requestInfo = new String(work.getData()).split(" ");
-        String[] elevatorStatuses = new String(elevatorInfo.getData()).split(" ");
+        String[] elevatorStatuses = new String(elevatorInfo.getData()).split("-");
+        int numElevators = elevatorStatuses.length;
+        
+        boolean requestDirection = requestInfo[2].equals("Up") ? true : false;
+        int startFloor = Integer.parseInt(requestInfo[1]);
+        int destinationFloor = Integer.parseInt(requestInfo[3]);
+        
+        int numIdle = 0;
+        
+        for (String s : elevatorStatuses) {
+            String[] temp = s.split("|");
+            if (temp[0].contentEquals("IDLE"))
+                numIdle++;
+        }
+        
+        if (numIdle == numElevators)
+            
+        
+
+        // We are done scheduling, so the Scheduler state should indicate that it is no
+        // longer scheduling.
+        goToNextState();
         return null;
     }
 
@@ -281,14 +312,15 @@ public class Scheduler implements Runnable {
         if (Thread.currentThread().getName().equals("F2E"))
             // Main routine to receive request information from the FloorSubsystem.
             while (true) {
-                this.receivePacket(true);
-                this.printPacketInfo(false, 2);
+                receivePacket(true);
+                printPacketInfo(false, 2);
                 addToWorkQueue(receiveFloorPacket);
             }
         else if (Thread.currentThread().getName().equals("E2S"))
             while (true) {
-                this.receivePacket(false);
-                this.printPacketInfo(false, 1);
+                // Main routine to receive confirmation from 
+                receivePacket(false);
+                printPacketInfo(false, 1);
                 System.out.println("Elevator moved to the floor");
                 System.out.println("---------------------------------------------------------------------");
             }
