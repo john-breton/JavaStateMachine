@@ -243,6 +243,7 @@ public class Scheduler implements Runnable {
      */
     private DatagramPacket sendStatusRequest() {
         byte[] request = "Status".getBytes();
+        System.out.println("-> Sending a request for Status to the ElevatorSubsystem\n");
         createPacket(request);
         try {
             // Send the packet
