@@ -310,7 +310,7 @@ public class Scheduler implements Runnable {
                 }   
             }
             int min = elevatorScores.indexOf(Collections.min(elevatorScores));
-            String newData = String.valueOf(min + 1) + "|0|" +  nextReq;
+            String newData = String.valueOf(min) + "|0|" +  nextReq;
             
             createPacket(newData.getBytes());                
         } else {

@@ -95,17 +95,20 @@ public class Elevator implements Runnable {
     /**
      * Advances the elevator to the next state.
      */
-    private void goToNextState() {
+    private void goToNextState(boolean up) {
 
         if (getState() == State.ARRIVED)
             state = State.IDLE;
-        else if (getState() == State.IDLE) {
+        else if (getState() == State.IDLE && up) {
             state = State.MOVINGUP;
         } else if (getState() == State.MOVINGUP) {
-            state = State.MOVINGDOWN;
+            state = State.ARRIVED;
         } else if (getState() == State.MOVINGDOWN) {
             state = State.ARRIVED;
-        }
+        } else
+            state = State.MOVINGDOWN;
+        
+        System.out.println("State has been updated to: " + getState());
 
     }
 
@@ -148,21 +151,26 @@ public class Elevator implements Runnable {
 
         // If the elevator is moving up
         if (currentFloor < destinationFloor) {
+            
             int count = currentFloor;
+            goToNextState(true);
             while (count <= destinationFloor) {
                 this.move(count);
                 count++;
             }
+            goToNextState(true);
             return true;
         }
 
         // If the elevator is moving down
         else if (currentFloor > destinationFloor) {
+            goToNextState(false);
             int count = currentFloor;
             while (count >= destinationFloor) {
                 this.move(count);
                 count--;
             }
+            goToNextState(true);
             return true;
         }
 
@@ -202,6 +210,7 @@ public class Elevator implements Runnable {
 			    System.out.println(toString());
 			    if (this.moveFloors()) {
 			        System.out.println("-> Elevator " + Thread.currentThread().getName() + " has moved to the floor " + currentRequest.getDestinationFloor() + "\n");
+			        goToNextState(true);
 			    }
 			}
 		} catch (InterruptedException e) {
