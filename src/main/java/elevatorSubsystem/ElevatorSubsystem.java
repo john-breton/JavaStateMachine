@@ -116,6 +116,9 @@ public class ElevatorSubsystem {
 			receiveSocket.receive(receivePacket);
 			if((receivePacket.getData()[0] == (byte) 0)) {
 				 statusPacket = getStatusPacket();
+				 System.out.println(statusPacket);
+				 String string = new String(statusPacket.getData());
+					System.out.print("\n Data (String): " + string + "\n\n");
 				
 			}else {
 				int elevatorNum = receivePacket.getData()[0];
@@ -413,38 +416,38 @@ public class ElevatorSubsystem {
 	    }
 
 	    
-	    private void receivePacketFromScheduler() {
-	        byte[] request = new byte[DATA_SIZE];
-	        receivePacket = new DatagramPacket(request, request.length);
-	        try {
-	            // Receive a packet
-	            receiveSocket.receive(receivePacket);
-	            this.printPacketInfo(false);
-	            this.addRequestToQueue();
-	        } catch (IOException e) {
+//	    private void receivePacketFromScheduler() {
+//	        byte[] request = new byte[DATA_SIZE];
+//	        receivePacket = new DatagramPacket(request, request.length);
+//	        try {
+//	            // Receive a packet
+//	            receiveSocket.receive(receivePacket);
+//	            this.printPacketInfo(false);
+//	            this.addRequestToQueue();
+//	        } catch (IOException e) {
+//
+//	            // Display an error if the packet cannot be received
+//	            // Terminate the program
+//	            System.out.println("Error: Elevator cannot receive packet.");
+//	            System.exit(1);
+//	        }
+//	    }
 
-	            // Display an error if the packet cannot be received
-	            // Terminate the program
-	            System.out.println("Error: Elevator cannot receive packet.");
-	            System.exit(1);
-	        }
-	    }
-
-	    private void printPacketInfo(boolean sending) {
-	        String symbol = sending ? "->" : "<-";
-	        String title = sending ? "sending" : "receiving";
-	        DatagramPacket packetInfo = sending ? sendPacket : receivePacket;
-	        System.out.println(symbol + " Scheduler: " + title + " Packet");
-	        System.out.println(symbol + " Address: " + packetInfo.getAddress());
-	        System.out.println(symbol + " Port: " + packetInfo.getPort());
-	        System.out.print(symbol + " Data (byte): ");
-	        for (byte b : packetInfo.getData()) {
-	            System.out.print(b);
-	        }
-
-	        String string = new String(packetInfo.getData());
-	        System.out.print("\n" + symbol + " Data (String): " + string + "\n\n");
-	    }
+//	    private void printPacketInfo(boolean sending) {
+//	        String symbol = sending ? "->" : "<-";
+//	        String title = sending ? "sending" : "receiving";
+//	        DatagramPacket packetInfo = sending ? sendPacket : receivePacket;
+//	        System.out.println(symbol + " Scheduler: " + title + " Packet");
+//	        System.out.println(symbol + " Address: " + packetInfo.getAddress());
+//	        System.out.println(symbol + " Port: " + packetInfo.getPort());
+//	        System.out.print(symbol + " Data (byte): ");
+//	        for (byte b : packetInfo.getData()) {
+//	            System.out.print(b);
+//	        }
+//
+//	        String string = new String(packetInfo.getData());
+//	        System.out.print("\n" + symbol + " Data (String): " + string + "\n\n");
+//	    }
 
 	    private void addRequestToQueue() {
 	        RequestData data = new RequestData(receivePacket.getData());
@@ -456,44 +459,44 @@ public class ElevatorSubsystem {
 	     * 
 	     * @param message
 	     */
-	    private void createPacket(byte[] message) {
-	        try {
-
-	            // Initialize and create a send packet
-	            sendPacket = new DatagramPacket(message, message.length, InetAddress.getLocalHost(),
-	                    SCHEDULER_RECEIVE_PORT);
-
-	        } catch (UnknownHostException e) {
-
-	            // Display an error message if the packet cannot be created.
-	            // Terminate the program.
-	            System.out.println("Error: Elevator could not create packet.");
-	            System.exit(1);
-	        }
-	    }
+//	    private void createPacket(byte[] message) {
+//	        try {
+//
+//	            // Initialize and create a send packet
+//	            sendPacket = new DatagramPacket(message, message.length, InetAddress.getLocalHost(),
+//	                    SCHEDULER_RECEIVE_PORT);
+//
+//	        } catch (UnknownHostException e) {
+//
+//	            // Display an error message if the packet cannot be created.
+//	            // Terminate the program.
+//	            System.out.println("Error: Elevator could not create packet.");
+//	            System.exit(1);
+//	        }
+//	    }
 
 	    /**
 	     * Method to send the packet to the scheduler
 	     */
-	    private void sendPacket() {
-	        try {
+//	    private void sendPacket() {
+//	        try {
+//
+//	            // Send the packet
+//	            sendSocket.send(sendPacket);
+//	        } catch (IOException e) {
+//
+//	            // Display an error message if the packet cannot be sent.
+//	            // Terminate the program.
+//	            System.out.println("Error: Elevator could not send the packet.");
+//	            System.exit(1);
+//	        }
+//	    }
 
-	            // Send the packet
-	            sendSocket.send(sendPacket);
-	        } catch (IOException e) {
-
-	            // Display an error message if the packet cannot be sent.
-	            // Terminate the program.
-	            System.out.println("Error: Elevator could not send the packet.");
-	            System.exit(1);
-	        }
-	    }
-
-	    private void sendPacketToScheduler() {
-	        this.createPacket(receivePacket.getData());
-	        this.printPacketInfo(true);
-	        this.sendPacket();
-	    }
+//	    private void sendPacketToScheduler() {
+//	        this.createPacket(receivePacket.getData());
+//	        this.printPacketInfo(true);
+//	        this.sendPacket();
+//	    }
 
 	    /**
 	     * Return the current movement of the Elevator, as a String.
@@ -513,10 +516,10 @@ public class ElevatorSubsystem {
 	            currentRequest = workQueue.pop();
 	            System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
 	            System.out.println(toString());
-//	            if (this.moveFloors()) {
-//	                System.out.println();
+	            if (this.moveFloors()) {
+	                System.out.println();
 //	                this.sendPacketToScheduler();
-//	            }
+	            }
 	        }
 	    }
 
