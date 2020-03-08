@@ -11,11 +11,6 @@ import java.util.*;
 
 public class ElevatorSubsystem implements Runnable {
 
-    /**
-     * The queue used to keep track of the work for the Elevator.
-     */
-    private Deque<RequestData> workQueue;
-
     private static final int SCHEDULER_SEND_PORT = 60;
 
     private static final int SCHEDULER_RECEIVE_PORT = 61;

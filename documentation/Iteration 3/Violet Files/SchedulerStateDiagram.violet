@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="13" class="java.beans.XMLDecoder">
+<java version="11.0.4" class="java.beans.XMLDecoder">
  <object class="com.horstmann.violet.StateDiagramGraph">
   <void method="addNode">
    <object class="com.horstmann.violet.CircularStateNode" id="CircularStateNode0">
@@ -141,14 +141,14 @@ Iteration 3 - March 7th, 2020</string>
       <string>x</string>
       <void method="set">
        <object idref="Rectangle2D$Double3"/>
-       <double>310.0</double>
+       <double>560.0</double>
       </void>
      </void>
      <void class="java.awt.geom.Rectangle2D$Double" method="getField">
       <string>y</string>
       <void method="set">
        <object idref="Rectangle2D$Double3"/>
-       <double>360.0</double>
+       <double>200.0</double>
       </void>
      </void>
     </void>
@@ -157,7 +157,7 @@ Iteration 3 - March 7th, 2020</string>
     </void>
     <void property="name">
      <void property="text">
-      <string>Data Sent</string>
+      <string>Scheduling</string>
      </void>
     </void>
    </object>
@@ -166,122 +166,19 @@ Iteration 3 - March 7th, 2020</string>
      <string>x</string>
      <void method="set">
       <object idref="Point2D$Double2"/>
-      <double>310.0</double>
+      <double>560.0</double>
      </void>
     </void>
     <void class="java.awt.geom.Point2D$Double" method="getField">
      <string>y</string>
      <void method="set">
       <object idref="Point2D$Double2"/>
-      <double>360.0</double>
+      <double>200.0</double>
      </void>
     </void>
     <void method="setLocation">
-     <double>310.0</double>
-     <double>360.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object class="com.horstmann.violet.StateNode" id="StateNode2">
-    <void id="Rectangle2D$Double4" property="bounds">
-     <void class="java.awt.geom.Rectangle2D$Double" method="getField">
-      <string>x</string>
-      <void method="set">
-       <object idref="Rectangle2D$Double4"/>
-       <double>300.0</double>
-      </void>
-     </void>
-     <void class="java.awt.geom.Rectangle2D$Double" method="getField">
-      <string>y</string>
-      <void method="set">
-       <object idref="Rectangle2D$Double4"/>
-       <double>40.0</double>
-      </void>
-     </void>
-     <void class="java.awt.geom.Rectangle2D$Double" method="getField">
-      <string>width</string>
-      <void method="set">
-       <object idref="Rectangle2D$Double4"/>
-       <double>100.0</double>
-      </void>
-     </void>
-    </void>
-    <void property="bounds">
-     <object idref="Rectangle2D$Double4"/>
-    </void>
-    <void property="name">
-     <void property="text">
-      <string>Data Received</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double" id="Point2D$Double3">
-    <void class="java.awt.geom.Point2D$Double" method="getField">
-     <string>x</string>
-     <void method="set">
-      <object idref="Point2D$Double3"/>
-      <double>300.0</double>
-     </void>
-    </void>
-    <void class="java.awt.geom.Point2D$Double" method="getField">
-     <string>y</string>
-     <void method="set">
-      <object idref="Point2D$Double3"/>
-      <double>40.0</double>
-     </void>
-    </void>
-    <void method="setLocation">
-     <double>300.0</double>
-     <double>40.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object class="com.horstmann.violet.StateNode" id="StateNode3">
-    <void id="Rectangle2D$Double5" property="bounds">
-     <void class="java.awt.geom.Rectangle2D$Double" method="getField">
-      <string>x</string>
-      <void method="set">
-       <object idref="Rectangle2D$Double5"/>
-       <double>510.0</double>
-      </void>
-     </void>
-     <void class="java.awt.geom.Rectangle2D$Double" method="getField">
-      <string>y</string>
-      <void method="set">
-       <object idref="Rectangle2D$Double5"/>
-       <double>190.0</double>
-      </void>
-     </void>
-    </void>
-    <void property="bounds">
-     <object idref="Rectangle2D$Double5"/>
-    </void>
-    <void property="name">
-     <void property="text">
-      <string>Idle</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double" id="Point2D$Double4">
-    <void class="java.awt.geom.Point2D$Double" method="getField">
-     <string>x</string>
-     <void method="set">
-      <object idref="Point2D$Double4"/>
-      <double>510.0</double>
-     </void>
-    </void>
-    <void class="java.awt.geom.Point2D$Double" method="getField">
-     <string>y</string>
-     <void method="set">
-      <object idref="Point2D$Double4"/>
-      <double>190.0</double>
-     </void>
-    </void>
-    <void method="setLocation">
-     <double>510.0</double>
-     <double>190.0</double>
+     <double>560.0</double>
+     <double>200.0</double>
     </void>
    </object>
   </void>
@@ -293,20 +190,11 @@ Iteration 3 - March 7th, 2020</string>
   <void method="connect">
    <object class="com.horstmann.violet.StateTransitionEdge">
     <void property="label">
-     <string>No more data</string>
-    </void>
-   </object>
-   <object idref="StateNode1"/>
-   <object idref="StateNode0"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.StateTransitionEdge">
-    <void property="label">
      <string>Data is received</string>
     </void>
    </object>
    <object idref="StateNode0"/>
-   <object idref="StateNode2"/>
+   <object idref="StateNode1"/>
   </void>
   <void method="connect">
    <object class="com.horstmann.violet.StateTransitionEdge">
@@ -314,35 +202,8 @@ Iteration 3 - March 7th, 2020</string>
      <string>Data is scheduled</string>
     </void>
    </object>
-   <object idref="StateNode2"/>
-   <object idref="StateNode3"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.StateTransitionEdge">
-    <void property="label">
-     <string>Data is ready to send</string>
-    </void>
-   </object>
-   <object idref="StateNode3"/>
    <object idref="StateNode1"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.StateTransitionEdge">
-    <void property="label">
-     <string>Data is received</string>
-    </void>
-   </object>
-   <object idref="StateNode3"/>
-   <object idref="StateNode2"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.StateTransitionEdge">
-    <void property="label">
-     <string>Data remains</string>
-    </void>
-   </object>
-   <object idref="StateNode1"/>
-   <object idref="StateNode3"/>
+   <object idref="StateNode0"/>
   </void>
  </object>
 </java>

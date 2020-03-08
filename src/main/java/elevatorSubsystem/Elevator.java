@@ -21,7 +21,7 @@ public class Elevator implements Runnable {
         IDLE, MOVINGUP, MOVINGDOWN, ARRIVED;
     }
 
-    private static State state;
+    private State state;
 
     /**
      * The queue used to keep track of the work for the Elevator.
