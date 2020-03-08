@@ -66,9 +66,9 @@ public class ElevatorSubsystem {
             System.exit(1);
         }
     	
-//    	while(true) {
-//            receivePacketFromScheduler();
-//    	}
+    	while(true) {
+            receivePacketFromScheduler();
+    	}
     	
     }
 
@@ -118,12 +118,14 @@ public class ElevatorSubsystem {
 		try {
 			// Receive a packet
 			receiveSocket.receive(receivePacket);
+			this.printPacketInfo(false);
 			if((receivePacket.getData()[0] == (byte) 0)) {
 				 statusPacket = getStatusPacket();
-				 System.out.println(statusPacket);
+//				 System.out.println(statusPacket);
 				 String string = new String(statusPacket.getData());
 					System.out.print("\n Data (String): " + string + "\n\n");
 			        sendStatusPacket();
+					printStatusPacketInfo(true);
 
 				
 			}else {
@@ -136,9 +138,10 @@ public class ElevatorSubsystem {
 				while(!elevators.get(elevatorNum-1).getAlert()) {}
 				
 				sendPacketToScheduler();
+				this.printPacketInfo(true);
 				
 			}
-//			this.printPacketInfo(false);
+			
 //			this.addRequestToQueue();
 		} catch (IOException e) {
 
@@ -204,6 +207,23 @@ public class ElevatorSubsystem {
 
 		String string = new String(packetInfo.getData());
 		System.out.print("\n" + symbol + " Data (String): " + string + "\n\n");
+	}
+	
+	
+	private void printStatusPacketInfo(boolean sending) {
+		String symbol = sending ? "->" : "<-";
+		String title = sending ? "sending" : "receiving";
+		DatagramPacket packetInfo = statusPacket;
+		System.out.println(symbol + " Scheduler: " + title + " Packet");
+		System.out.println(symbol +  " Address: " + packetInfo.getAddress());
+		System.out.println(symbol + " Port: " + packetInfo.getPort());
+		System.out.print(symbol + " Data (byte): ");
+		for (byte b : packetInfo.getData()) {
+			System.out.print(b);
+		}
+
+		String string = new String(packetInfo.getData());
+		System.out.print("\n"+symbol + "Data (String): " + string + "\n\n");
 	}
 
 	private void addRequestToQueue() {
