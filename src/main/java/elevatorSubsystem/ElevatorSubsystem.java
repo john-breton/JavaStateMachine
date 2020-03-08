@@ -119,10 +119,14 @@ public class ElevatorSubsystem {
 				 System.out.println(statusPacket);
 				 String string = new String(statusPacket.getData());
 					System.out.print("\n Data (String): " + string + "\n\n");
+			        sendStatusPacket();
+
 				
 			}else {
 				int elevatorNum = receivePacket.getData()[0];
 				int workQueueIndex = receivePacket.getData()[2];
+				byte[] data = Arrays.copyOfRange(receivePacket.getData(), 4, receivePacket.getData().length);
+				elevators.get(elevatorNum-1).setWorkQueue(data, workQueueIndex);
 				
 			}
 //			this.printPacketInfo(false);
@@ -147,6 +151,7 @@ public class ElevatorSubsystem {
 			for(Elevator ev: elevators) {
 				for (byte stateByte : ev.getState().name().getBytes()) {
 					d.add(stateByte);
+
 				}
 				if(ev.getCurrentRequest()!=null){
 					d.add((byte) ev.getCurrentFloor());
@@ -414,6 +419,17 @@ public class ElevatorSubsystem {
 	    
 	    	return currentRequest.getDestinationFloor();
 	    }
+	    
+	    /**
+	     * Method to set work queue
+	     * 
+	     * @return
+	     */
+	    private void setWorkQueue(byte[] request, int index) {
+	    	RequestData data = new RequestData(request);
+	        this.workQueue.add(data);
+	    
+	    }
 
 	    
 //	    private void receivePacketFromScheduler() {
@@ -548,7 +564,6 @@ public class ElevatorSubsystem {
         System.out.println("---- ELEVATOR SUB SYSTEM ----- \n");
         ElevatorSubsystem test = new ElevatorSubsystem();
         test.receivePacketFromScheduler();
-        test.sendStatusPacket();
 //        Thread elevator1 = new Thread(test.new Elevator());
 //        Thread elevator2 = new Thread(test.new Elevator());
 //        elevator1.start();
