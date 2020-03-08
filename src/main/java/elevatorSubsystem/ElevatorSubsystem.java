@@ -42,6 +42,8 @@ public class ElevatorSubsystem implements Runnable {
     	Elevator elevator2 = new Elevator();
     	Thread elevatorThread1 = new Thread(elevator1);
         Thread elevatorThread2 = new Thread(elevator2);
+        elevatorThread1.setName("1");
+        elevatorThread2.setName("2");
         elevators.add(elevator1);
     	elevators.add(elevator2);
     	elevatorThread1.start();
@@ -112,6 +114,17 @@ public class ElevatorSubsystem implements Runnable {
     private boolean isStatusRequest(byte[] data) {
     	return new String(data).contains("Status");
     }
+    
+    private void parseInfoFromScheduler(byte[] data) {
+    	String string = new String(data);
+    	String[] temp = string.split("\\|");
+    	int elvatorNum = Integer.parseInt(temp[0]);
+    	int index = Integer.parseInt(temp[1]);
+    	RequestData request = new RequestData(temp[2]);
+    	
+    	System.out.println("-> Sending request to the Elevator " + (elvatorNum + 1) + "\n");
+    	elevators.get(elvatorNum).addToQueue(request, index);
+    }
 
 	private void receivePacketFromScheduler() {
 		byte[] request = new byte[DATA_SIZE];
@@ -134,10 +147,8 @@ public class ElevatorSubsystem implements Runnable {
 				this.sendPacket();
 			}
 			
-			// Need to forward this to elevator
-			else {
-				// this.printPacketInfo(false);
-				// this.addRequestToQueue();
+			else {	
+				this.parseInfoFromScheduler(receivePacket.getData());
 			}
 		} catch (IOException e) {
 

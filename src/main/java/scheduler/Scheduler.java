@@ -147,8 +147,6 @@ public class Scheduler implements Runnable {
 
             // Initialize and create a send packet
             sendPacket = new DatagramPacket(message, message.length, InetAddress.getLocalHost(), ELEVATOR_RECEIVE_PORT);
-            System.out.println("-------created packet with message " + new String(message));
-
         } catch (UnknownHostException e) {
 
             // Display an error message if the packet cannot be created.
@@ -164,7 +162,7 @@ public class Scheduler implements Runnable {
      * to decide which Elevator should receive the packet.
      */
     private void sendPacketToElevator() {
-    	System.out.println("sending elevator number");
+    	System.out.println("-> Sending elvator number");
         printPacketInfo(true, 3);
         try {
 
@@ -295,9 +293,6 @@ public class Scheduler implements Runnable {
 
         int numIdle = 0;
         
-        
-        System.out.println(elevatorStatuses[0]);
-
         for (String s : elevatorStatuses) {
             String[] temp = s.split("\\|");
             if (temp[0].trim().equals("IDLE"))
@@ -317,7 +312,6 @@ public class Scheduler implements Runnable {
             int min = elevatorScores.indexOf(Collections.min(elevatorScores));
             String newData = String.valueOf(min + 1) + "|0|" +  nextReq;
             
-            System.out.println("creating elevator packet");
             createPacket(newData.getBytes());                
         } else {
 
@@ -345,7 +339,6 @@ public class Scheduler implements Runnable {
                 // Main routine to receive confirmation from
                 receivePacket(false);
                 printPacketInfo(false, 1);
-                System.out.println("Elevator moved to the floor");
                 System.out.println("---------------------------------------------------------------------");
             }
         else

@@ -1,13 +1,6 @@
 package elevatorSubsystem;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.ArrayList;
 
 //import elevatorSubsystem.ElevatorSubsystem.State;
 import floorSubsystem.RequestData;
@@ -33,7 +26,7 @@ public class Elevator implements Runnable {
     /**
      * The queue used to keep track of the work for the Elevator.
      */
-    private Deque<RequestData> workQueue;
+    private ArrayList<RequestData> workQueue;
 
     /**
      * The current request the Elevator is handling.
@@ -57,7 +50,7 @@ public class Elevator implements Runnable {
     public Elevator() {
         state = State.IDLE;
         currentFloor = 0;
-        workQueue = new ArrayDeque<RequestData>();
+        workQueue = new ArrayList<RequestData>();
         
         // To test
         // Add data in the work queue
@@ -70,8 +63,9 @@ public class Elevator implements Runnable {
      * 
      * @param requestData
      */
-    public void addToQueue(RequestData requestData) {
-        workQueue.add(requestData);
+    public synchronized void addToQueue(RequestData requestData, int index) {
+        workQueue.add(index, requestData);
+        notifyAll();
     }
     
     public String getStatus() {
@@ -135,6 +129,7 @@ public class Elevator implements Runnable {
 
             // Wait while the elevator is moving in between floors
             Thread.sleep((long) (TIME_PER_FLOOR * 1000));
+            currentFloor = floor;
         } catch (InterruptedException e) {
             System.out.println("Error: Elevator cannot not move");
         }
@@ -178,11 +173,14 @@ public class Elevator implements Runnable {
         }
     }
 
-//    private void addRequestToQueue(RquestData data) {
-//        RequestData data = new RequestData(receivePacket.getData());
-//        this.workQueue.add(data);
-//    }
-
+    public synchronized boolean haveWork() throws InterruptedException {
+    	while (workQueue.isEmpty()) {
+    		wait();
+    	}
+    	
+    	return true;
+    }
+    
     /**
      * Return the current movement of the Elevator, as a String.
      * 
@@ -197,14 +195,19 @@ public class Elevator implements Runnable {
     }
 
     private void doWork() {
-        if (!workQueue.isEmpty()) {
-            currentRequest = workQueue.pop();
-            System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
-            System.out.println(toString());
-            if (this.moveFloors()) {
-                System.out.println();
-            }
-        }
+        try {
+			if (haveWork()) {
+			    currentRequest = workQueue.remove(0);
+			    System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
+			    System.out.println(toString());
+			    if (this.moveFloors()) {
+			        System.out.println("-> Elevator " + Thread.currentThread().getName() + " has moved to the floor " + currentRequest.getDestinationFloor() + "\n");
+			    }
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     /**
@@ -212,10 +215,8 @@ public class Elevator implements Runnable {
      */
     @Override
     public void run() {
-//        while (true) {
-//            this.receivePacketFromScheduler();
-//            this.doWork();
-//            System.out.println("---------------------------------------------------------------------");
-//        }
+        while (true) {
+            this.doWork();
+        }
     }
 }
