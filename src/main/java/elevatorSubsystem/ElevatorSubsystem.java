@@ -124,9 +124,14 @@ public class ElevatorSubsystem {
 				
 			}else {
 				int elevatorNum = receivePacket.getData()[0];
+				elevators.get(elevatorNum-1).setAlert(false);
 				int workQueueIndex = receivePacket.getData()[2];
 				byte[] data = Arrays.copyOfRange(receivePacket.getData(), 4, receivePacket.getData().length);
 				elevators.get(elevatorNum-1).setWorkQueue(data, workQueueIndex);
+				
+				while(!elevators.get(elevatorNum-1).getAlert()) {}
+				
+				sendPacketToScheduler();
 				
 			}
 //			this.printPacketInfo(false);
@@ -158,18 +163,6 @@ public class ElevatorSubsystem {
 					d.add((byte) ev.getDestinationFloor());	
 				}
 			}
-			
-//			for(Elevator ev: elevators) {
-//				if(ev.getCurrentRequest()!=null){
-//					d.add((byte) ev.getCurrentFloor());
-//				}
-//					
-//				
-//			}
-//			
-//			for(Elevator ev: elevators) {
-//				d.add((byte) ev.getDestinationFloor());	
-//			}
 			
 			byte[] s = new byte[d.size()];
 
@@ -278,11 +271,15 @@ public class ElevatorSubsystem {
 	    private DatagramPacket sendPacket, receivePacket;
 
 	    private DatagramSocket receiveSocket, sendSocket;
+	    
+	    private boolean alert;
 		
 	    
 	    
 
-	    /**
+	    
+
+		/**
 	     * Construct a new Elevator.
 	     */
 	    public Elevator() {
@@ -430,6 +427,15 @@ public class ElevatorSubsystem {
 	        this.workQueue.add(data);
 	    
 	    }
+	    
+	    
+	    public boolean getAlert() {
+			return alert;
+		}
+
+		public void setAlert(boolean alert) {
+			this.alert = alert;
+		}
 
 	    
 //	    private void receivePacketFromScheduler() {
@@ -534,7 +540,7 @@ public class ElevatorSubsystem {
 	            System.out.println(toString());
 	            if (this.moveFloors()) {
 	                System.out.println();
-//	                this.sendPacketToScheduler();
+	                alert = true;
 	            }
 	        }
 	    }
