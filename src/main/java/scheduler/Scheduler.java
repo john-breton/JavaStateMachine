@@ -287,28 +287,34 @@ public class Scheduler implements Runnable {
         String nextReq = new String(work.getData());
         String[] requestInfo = new String(work.getData()).split(" ");
         String[] elevatorStatuses = new String(elevatorInfo.getData()).split("-");
-        int numElevators = elevatorStatuses.length;
+        int numElevators = elevatorStatuses.length - 1;
 
         boolean requestDirection = requestInfo[2].equals("Up") ? true : false;
         int startFloor = Integer.parseInt(requestInfo[1]);
         int destinationFloor = Integer.parseInt(requestInfo[3]);
 
         int numIdle = 0;
+        
+        
+        System.out.println(elevatorStatuses[0]);
 
         for (String s : elevatorStatuses) {
-            String[] temp = s.split("|");
-            if (temp[0].contentEquals("IDLE"))
+            String[] temp = s.split("\\|");
+            if (temp[0].trim().equals("IDLE"))
                 numIdle++;
         }
+        
 
         if (numIdle == numElevators) {
             int i = 0;
             for (String s : elevatorStatuses) {
-                String[] temp = s.split("|");
-                elevatorScores.add(i, Math.abs(startFloor - Integer.parseInt(temp[1])));
-                i++;
+                if (i < numElevators) {
+                    String[] temp = s.split("\\|");
+                    elevatorScores.add(i, Math.abs(startFloor - Integer.parseInt(temp[1])));
+                    i++;
+                }   
             }
-            int min = Collections.min(elevatorScores);
+            int min = elevatorScores.indexOf(Collections.min(elevatorScores));
             String newData = String.valueOf(min) + "|0|" +  nextReq;
             
             System.out.println("creating elevator packet");

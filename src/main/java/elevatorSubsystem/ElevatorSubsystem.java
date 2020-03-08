@@ -125,7 +125,7 @@ public class ElevatorSubsystem implements Runnable {
 				
 				String elevatorStatues = ""; 
 				for(Elevator e: elevators) {
-					elevatorStatues += e.getStatus() + " - ";
+					elevatorStatues += e.getStatus() + "-";
 				}
 				
 				byte[] statuesByte = elevatorStatues.getBytes();
