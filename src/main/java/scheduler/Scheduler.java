@@ -272,12 +272,14 @@ public class Scheduler implements Runnable {
      *         information as to which Elevator the request will be added to, and if
      *         it should do at the front of the back of the workQueue.
      */
-    private DatagramPacket schedule(DatagramPacket work, DatagramPacket elevatorInfo) {
+    private void schedule(DatagramPacket work, DatagramPacket elevatorInfo) {
         // Progress the state of the Scheduler to indicate that we are currently
         // scheduling a request.
         goToNextState();
         
-        byte[] nextReq = work.getData();
+        ArrayList<Integer> elevatorScores = new ArrayList<>();
+        
+        String nextReq = new String(work.getData());
         String[] requestInfo = new String(work.getData()).split(" ");
         String[] elevatorStatuses = new String(elevatorInfo.getData()).split("-");
         int numElevators = elevatorStatuses.length;
@@ -294,14 +296,25 @@ public class Scheduler implements Runnable {
                 numIdle++;
         }
         
-        if (numIdle == numElevators)
+        if (numIdle == numElevators) {
+            int i = 0;
+            for (String s : elevatorStatuses) {
+                String[] temp = s.split("|");
+                elevatorScores.add(i, Math.abs(startFloor - Integer.parseInt(temp[1])));
+                i++;
+            }
+            int min = Collections.min(elevatorScores);
+            String newData = String.valueOf(min) + "|0|" +  nextReq;
+            createPacket(newData.getBytes());
+                
+        } else {
             
+        }
         
 
         // We are done scheduling, so the Scheduler state should indicate that it is no
         // longer scheduling.
         goToNextState();
-        return null;
     }
 
     /**
@@ -329,7 +342,7 @@ public class Scheduler implements Runnable {
                 DatagramPacket work = checkWork();
                 // If we get here, we have work we can do!
                 DatagramPacket elevatorInfo = this.sendStatusRequest();
-                sendPacket = schedule(work, elevatorInfo);
+                schedule(work, elevatorInfo);
                 sendPacketToElevator();
             }
     }
