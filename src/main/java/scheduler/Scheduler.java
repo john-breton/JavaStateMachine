@@ -244,6 +244,7 @@ public class Scheduler implements Runnable {
     private DatagramPacket sendStatusRequest() {
         byte[] request = "Status".getBytes();
         System.out.println("-> Sending a request for Status to the ElevatorSubsystem\n");
+
         createPacket(request);
         try {
         	
@@ -292,13 +293,13 @@ public class Scheduler implements Runnable {
         int destinationFloor = Integer.parseInt(requestInfo[3]);
 
         int numIdle = 0;
-        
+
         for (String s : elevatorStatuses) {
             String[] temp = s.split("\\|");
             if (temp[0].trim().equals("IDLE"))
                 numIdle++;
         }
-        
+
 
         if (numIdle == numElevators) {
             int i = 0;
@@ -307,12 +308,14 @@ public class Scheduler implements Runnable {
                     String[] temp = s.split("\\|");
                     elevatorScores.add(i, Math.abs(startFloor - Integer.parseInt(temp[1])));
                     i++;
+
                 }   
             }
             int min = elevatorScores.indexOf(Collections.min(elevatorScores));
             String newData = String.valueOf(min) + "|0|" +  nextReq;
             
             createPacket(newData.getBytes());                
+
         } else {
 
         }

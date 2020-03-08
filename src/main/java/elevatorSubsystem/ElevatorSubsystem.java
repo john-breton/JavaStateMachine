@@ -17,6 +17,9 @@ public class ElevatorSubsystem implements Runnable {
     private Deque<RequestData> workQueue;
 
     private static final int SCHEDULER_SEND_PORT = 60;
+    
+    private static final int SCHEDULER_STATUS_REPLY_PORT = 62;
+
 
     private static final int SCHEDULER_RECEIVE_PORT = 61;
     private static final int SCHEDULER_RECEIVE_REPLY_PORT = 62;
@@ -55,6 +58,7 @@ public class ElevatorSubsystem implements Runnable {
             System.out.println("Error: Elevator sub system cannot be initialized.");
             System.exit(1);
         }
+
     }
     
     /**
@@ -140,6 +144,7 @@ public class ElevatorSubsystem implements Runnable {
 				for(Elevator e: elevators) {
 					elevatorStatues += e.getStatus() + "-";
 				}
+
 				
 				byte[] statuesByte = elevatorStatues.getBytes();
 				this.createPacket(statuesByte, true);
@@ -150,6 +155,7 @@ public class ElevatorSubsystem implements Runnable {
 			else {	
 				this.parseInfoFromScheduler(receivePacket.getData());
 			}
+
 		} catch (IOException e) {
 
 			// Display an error if the packet cannot be received
@@ -165,6 +171,7 @@ public class ElevatorSubsystem implements Runnable {
 			this.receivePacketFromScheduler();
 		}
 	}
+
 	
 	/**
      * Entry point for the application.
@@ -174,9 +181,11 @@ public class ElevatorSubsystem implements Runnable {
      */
     public static void main(String[] args) {
         System.out.println("---- ELEVATOR SUB SYSTEM ----- \n");
+
         ElevatorSubsystem elevatorSubSystem = new ElevatorSubsystem();
         Thread elevatorSubSystemThread = new Thread(elevatorSubSystem);
         elevatorSubSystemThread.start();
         
+
     }
 }

@@ -1,7 +1,7 @@
-SYSC 3303 - Project - Iteration 2
+SYSC 3303 - Project - Iteration 3
 Lab Section A1 - Group 7
 John Breton, Shoaib Khan, Osayimwen Odia, Deji Sayomi
-February 15th, 2020
+March 7th, 2020
 README.txt prepared by: John Breton
 
 ## SETUP INSTRUCTIONS ##
@@ -18,24 +18,46 @@ Run As->Maven test. This will build the project and run all test cases (as well 
 any failures and in which test class they occurred!).
 
 Maven projects require very specific folder structure to function correctly. You may notice empty
-folders. This were not left for no reason, but are simply a consequence of setting up a Maven project.
+folders. These were not left for no reason, but are simply a consequence of setting up a Maven project.
 In future iterations, the folders will be used for resources necessary to run graphical components
 of the application.
 
-The main method is located in src/main/java/simulator/Simulator.java. Once navigated to the file,
-right-click on it and select Run as->Java Application. This will begin the program and output will
-be printed to the console until the program finishes execution.
+For Iteration 3, the original project was separated into 3 distinct programs. In order to run our
+simulation, the following must be done in this order:
+ 1. Navigate to src/main/java/elevatorSubsystem/ElevatorSubsystem.java and right click on 
+    ElevatorSubsystem.java. Select "Run As" and then hit Java Application.
+ 2. Navigate to src/main/java/scheduler/Scheduler.java and right click on 
+    Scheduler.java. Select "Run As" and then hit Java Application.
+ 3. Navigate to src/main/java/floorSubsystem/Floor.java and right click on 
+    Floor.java. Select "Run As" and then hit Java Application.
+
+Once this has been done, the simulation will begin executing! If an error occurs, that means the ports
+we have defined are currently in use by another program on the school network. The best you can do is
+to try to ensure no other iterations are being run on any of the other lab computers once you test this
+out. If you continue to have problems, then changing the port numbers may be necessary. These are constants
+in the code, and are easy enough to locate. If that still doesn't allow the projects to run, then I'm out of
+ideas.
 
 Naming of packages reflect the names described in the Project hand out. Class names attempt to 
 capture the idea of each class and how they fit into the elevator simulator. In future iterations, 
 classes will be renamed to reflect their responsibilities within the whole of the simulator. 
 
 Java classes are located in SYSC-3303/src/main/java while java test classes are located in 
-SYSC-3303/src/test/java. UML documentation can be found in SYSC-3303/documentation/Iteration 2/UML.
+SYSC-3303/src/test/java. UML documentation can be found in SYSC-3303/documentation/Iteration 3/UML.
 State Diagrams are also found within the UML directory, in the appropriately named folder.
 If you have any trouble with anything about the project please email me at: johnbreton@cmail.carleton.ca
 and I will help you in any way possible.
 
+
+## BREAKDOWN OF RESPONSIBILITIES FOR ITERATION 3 ##
+John Breton 
+ - Scheduler State Implementation/Scheduler multi-threading, minor ElevatorSubsystem changes, README
+Shoaib Khan
+ - UDP communication, ElevatorSubsystem work, Scheduler help, JUnit Testing updates
+Osayimwen (Justice) Odia
+ - Elevator State implemnetation, ElevatorSubsystem work
+Deji Sayomi
+ - Documentation
 
 ## BREAKDOWN OF RESPONSIBILITIES FOR ITERATION 2 ##
 John Breton 
