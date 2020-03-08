@@ -19,6 +19,7 @@ public class ElevatorSubsystem implements Runnable {
     private static final int SCHEDULER_SEND_PORT = 60;
 
     private static final int SCHEDULER_RECEIVE_PORT = 61;
+    private static final int SCHEDULER_RECEIVE_REPLY_PORT = 62;
 
     private static final int DATA_SIZE = 26;
     
@@ -59,12 +60,12 @@ public class ElevatorSubsystem implements Runnable {
      * 
      * @param message
      */
-    private void createPacket(byte[] message) {
+    private void createPacket(byte[] message, boolean status) {
         try {
 
             // Initialize and create a send packet
             sendPacket = new DatagramPacket(message, message.length, InetAddress.getLocalHost(),
-                    SCHEDULER_RECEIVE_PORT);
+                    status ? SCHEDULER_RECEIVE_REPLY_PORT: SCHEDULER_RECEIVE_PORT);
 
         } catch (UnknownHostException e) {
 
@@ -128,7 +129,7 @@ public class ElevatorSubsystem implements Runnable {
 				}
 				
 				byte[] statuesByte = elevatorStatues.getBytes();
-				this.createPacket(statuesByte);
+				this.createPacket(statuesByte, true);
 				this.printPacketInfo(true);
 				this.sendPacket();
 			}
