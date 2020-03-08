@@ -147,7 +147,6 @@ public class Scheduler implements Runnable {
 
             // Initialize and create a send packet
             sendPacket = new DatagramPacket(message, message.length, InetAddress.getLocalHost(), ELEVATOR_RECEIVE_PORT);
-
         } catch (UnknownHostException e) {
 
             // Display an error message if the packet cannot be created.
@@ -163,6 +162,7 @@ public class Scheduler implements Runnable {
      * to decide which Elevator should receive the packet.
      */
     private void sendPacketToElevator() {
+    	System.out.println("-> Sending elvator number");
         printPacketInfo(true, 3);
         try {
 
@@ -242,10 +242,13 @@ public class Scheduler implements Runnable {
      * @return A DatagramPacket containing the information for all Elevators.
      */
     private DatagramPacket sendStatusRequest() {
-        byte[] request = new byte[1];
-        request[0] = 0b0;
+        byte[] request = "Status".getBytes();
+        System.out.println("-> Sending a request for Status to the ElevatorSubsystem\n");
+
         createPacket(request);
         try {
+        	
+        	this.printPacketInfo(true, 3);
             // Send the packet
             sendSocket.send(sendPacket);
             // Wait for a reply
@@ -291,13 +294,12 @@ public class Scheduler implements Runnable {
 
         int numIdle = 0;
 
-        System.out.println(elevatorStatuses[0]);
-
         for (String s : elevatorStatuses) {
             String[] temp = s.split("\\|");
             if (temp[0].trim().equals("IDLE"))
                 numIdle++;
         }
+
 
         if (numIdle == numElevators) {
             int i = 0;
@@ -306,13 +308,14 @@ public class Scheduler implements Runnable {
                     String[] temp = s.split("\\|");
                     elevatorScores.add(i, Math.abs(startFloor - Integer.parseInt(temp[1])));
                     i++;
-                }
+
+                }   
             }
             int min = elevatorScores.indexOf(Collections.min(elevatorScores));
-            String newData = String.valueOf(min + 1) + "|0|" + nextReq;
+            String newData = String.valueOf(min) + "|0|" +  nextReq;
+            
+            createPacket(newData.getBytes());                
 
-            System.out.println("creating elevator packet");
-            createPacket(newData.getBytes());
         } else {
 
         }
@@ -339,7 +342,6 @@ public class Scheduler implements Runnable {
                 // Main routine to receive confirmation from
                 receivePacket(false);
                 printPacketInfo(false, 1);
-                System.out.println("Elevator moved to the floor");
                 System.out.println("---------------------------------------------------------------------");
             }
         else
