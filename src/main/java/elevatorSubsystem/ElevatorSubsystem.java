@@ -66,6 +66,10 @@ public class ElevatorSubsystem {
             System.exit(1);
         }
     	
+//    	while(true) {
+//            receivePacketFromScheduler();
+//    	}
+    	
     }
 
     /**
@@ -156,12 +160,14 @@ public class ElevatorSubsystem {
 			for(Elevator ev: elevators) {
 				for (byte stateByte : ev.getState().name().getBytes()) {
 					d.add(stateByte);
-
 				}
+				d.add((byte) '|');
 				if(ev.getCurrentRequest()!=null){
 					d.add((byte) ev.getCurrentFloor());
+					d.add((byte) '|');
 					d.add((byte) ev.getDestinationFloor());	
 				}
+				d.add((byte) '-');
 			}
 			
 			byte[] s = new byte[d.size()];
@@ -362,27 +368,32 @@ public class ElevatorSubsystem {
 
 	        // If the elevator is moving up
 	        if (currentFloor < destinationFloor) {
+	        	state = State.MOVINGUP;
 	            int count = currentFloor;
 	            while (count <= destinationFloor) {
 	                this.move(count);
 	                count++;
 	            }
+	            state = State.ARRIVED;
 	            return true;
 	        }
 
 	        // If the elevator is moving down
 	        else if (currentFloor > destinationFloor) {
+	        	state = State.MOVINGDOWN;
 	            int count = currentFloor;
 	            while (count >= destinationFloor) {
 	                this.move(count);
 	                count--;
 	            }
+	            state = State.ARRIVED;
 	            return true;
 	        }
 
 	        // If the destination floor is the same as the current floor
 	        else {
 	            System.out.println("Elevator is already at the floor");
+	            state = State.IDLE;
 	            return false;
 	        }
 	    }
