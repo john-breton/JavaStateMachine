@@ -169,6 +169,10 @@ public class ElevatorSubsystem {
 					d.add((byte) ev.getCurrentFloor());
 					d.add((byte) '|');
 					d.add((byte) ev.getDestinationFloor());	
+				}else {
+					d.add((byte) '0');
+					d.add((byte) '|');
+					d.add((byte) '0');	
 				}
 				d.add((byte) '-');
 			}
