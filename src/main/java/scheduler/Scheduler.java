@@ -250,7 +250,8 @@ public class Scheduler implements Runnable {
             sendSocket.send(sendPacket);
             // Wait for a reply
             byte[] longMessage = new byte[1000];
-            receiveElevatorInfo = new DatagramPacket(longMessage, longMessage.length, InetAddress.getLocalHost(), ELEVATOR_REPLY_PORT);
+            receiveElevatorInfo = new DatagramPacket(longMessage, longMessage.length, InetAddress.getLocalHost(),
+                    ELEVATOR_REPLY_PORT);
             elevatorSocketReplier.receive(receiveElevatorInfo);
             return receiveElevatorInfo;
         } catch (IOException e) {
@@ -272,30 +273,48 @@ public class Scheduler implements Runnable {
      *         information as to which Elevator the request will be added to, and if
      *         it should do at the front of the back of the workQueue.
      */
-    private DatagramPacket schedule(DatagramPacket work, DatagramPacket elevatorInfo) {
+    private void schedule(DatagramPacket work, DatagramPacket elevatorInfo) {
         // Progress the state of the Scheduler to indicate that we are currently
         // scheduling a request.
         goToNextState();
-        
-        byte[] nextReq = work.getData();
+
+        ArrayList<Integer> elevatorScores = new ArrayList<>();
+
+        String nextReq = new String(work.getData());
         String[] requestInfo = new String(work.getData()).split(" ");
         String[] elevatorStatuses = new String(elevatorInfo.getData()).split("-");
         int numElevators = elevatorStatuses.length;
-        
+
         boolean requestDirection = requestInfo[2].equals("Up") ? true : false;
         int startFloor = Integer.parseInt(requestInfo[1]);
         int destinationFloor = Integer.parseInt(requestInfo[3]);
-        
-        int numberIdle = 0;
-        
-        
-        
-        
+
+        int numIdle = 0;
+
+        for (String s : elevatorStatuses) {
+            String[] temp = s.split("|");
+            if (temp[0].contentEquals("IDLE"))
+                numIdle++;
+        }
+
+        if (numIdle == numElevators) {
+            int i = 0;
+            for (String s : elevatorStatuses) {
+                String[] temp = s.split("|");
+                elevatorScores.add(i, Math.abs(startFloor - Integer.parseInt(temp[1])));
+                i++;
+            }
+            int min = elevatorScores.indexOf(Collections.min(elevatorScores));
+            String newData = (String.valueOf(min) + 1) + "|0|" + nextReq;
+            createPacket(newData.getBytes());
+
+        } else {
+
+        }
 
         // We are done scheduling, so the Scheduler state should indicate that it is no
         // longer scheduling.
         goToNextState();
-        return null;
     }
 
     /**
@@ -312,7 +331,7 @@ public class Scheduler implements Runnable {
             }
         else if (Thread.currentThread().getName().equals("E2S"))
             while (true) {
-                // Main routine to receive confirmation from 
+                // Main routine to receive confirmation from
                 receivePacket(false);
                 printPacketInfo(false, 1);
                 System.out.println("Elevator moved to the floor");
@@ -323,7 +342,7 @@ public class Scheduler implements Runnable {
                 DatagramPacket work = checkWork();
                 // If we get here, we have work we can do!
                 DatagramPacket elevatorInfo = this.sendStatusRequest();
-                sendPacket = schedule(work, elevatorInfo);
+                schedule(work, elevatorInfo);
                 sendPacketToElevator();
             }
     }
