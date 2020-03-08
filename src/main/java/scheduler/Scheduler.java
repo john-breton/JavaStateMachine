@@ -279,6 +279,10 @@ public class Scheduler implements Runnable {
         byte[] nextReq = work.getData();
         String[] requestInfo = new String(work.getData()).split(" ");
         String[] elevatorStatuses = new String(elevatorInfo.getData()).split(" ");
+        
+        boolean requestDirection = requestInfo[2].equals("Up") ? true : false;
+        int startFloor = Integer.parseInt(requestInfo[1]);
+        
 
         // We are done scheduling, so the Scheduler state should indicate that it is no
         // longer scheduling.
