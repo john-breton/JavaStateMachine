@@ -24,6 +24,9 @@ public class ElevatorSubsystem {
     private Deque<RequestData> workQueue;
 
     private static final int SCHEDULER_SEND_PORT = 60;
+    
+    private static final int SCHEDULER_STATUS_REPLY_PORT = 62;
+
 
     private static final int SCHEDULER_RECEIVE_PORT = 61;
 
@@ -111,7 +114,7 @@ public class ElevatorSubsystem {
 		try {
 			// Receive a packet
 			receiveSocket.receive(receivePacket);
-			if((receivePacket.getData()[0] == (byte) 1) && (receivePacket.getData().length==1)) {
+			if((receivePacket.getData()[0] == (byte) 0)) {
 				 statusPacket = getStatusPacket();
 				
 			}else {
@@ -142,16 +145,23 @@ public class ElevatorSubsystem {
 				for (byte stateByte : ev.getState().name().getBytes()) {
 					d.add(stateByte);
 				}
-			}
-			
-			for(Elevator ev: elevators) {
+				if(ev.getCurrentRequest()!=null){
 					d.add((byte) ev.getCurrentFloor());
-				
+					d.add((byte) ev.getDestinationFloor());	
+				}
 			}
 			
-			for(Elevator ev: elevators) {
-				d.add((byte) ev.getDestinationFloor());	
-			}
+//			for(Elevator ev: elevators) {
+//				if(ev.getCurrentRequest()!=null){
+//					d.add((byte) ev.getCurrentFloor());
+//				}
+//					
+//				
+//			}
+//			
+//			for(Elevator ev: elevators) {
+//				d.add((byte) ev.getDestinationFloor());	
+//			}
 			
 			byte[] s = new byte[d.size()];
 
@@ -160,7 +170,7 @@ public class ElevatorSubsystem {
 			}
             // Initialize and create a send packet
              DatagramPacket ans = new DatagramPacket(s, s.length, InetAddress.getLocalHost(),
-                    SCHEDULER_SEND_PORT);
+            		 SCHEDULER_STATUS_REPLY_PORT);
             return ans;
 
         } catch (UnknownHostException e) {
@@ -381,6 +391,16 @@ public class ElevatorSubsystem {
 	    
 	    	return currentRequest.getCurrentFloor();
 	    }
+	    
+	    /**
+	     * Method to get current request
+	     * 
+	     * @return
+	     */
+	    private RequestData getCurrentRequest() {
+	    
+	    	return currentRequest;
+	    }
 
 	    /**
 	     * Method to get destination floor
@@ -507,7 +527,7 @@ public class ElevatorSubsystem {
 	    public void run() {
 	        while (true) {
 	            this.doWork();
-	            System.out.println("---------------------------------------------------------------------");
+//	            System.out.println("---------------------------------------------------------------------");
 	        }
 	    }
 	}
