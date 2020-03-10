@@ -22,10 +22,9 @@ public class TimerTest {
 	private final PrintStream originalOut = System.out;
 
 	/**
-	 * @throws java.lang.Exception
-	 */
+     */
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		timer = new Timer();
 	}
 
@@ -40,10 +39,9 @@ public class TimerTest {
 	}
 
 	/**
-	 * @throws java.lang.Exception
-	 */
+     */
 	@AfterEach
-	void tearDown() throws Exception {
+	void tearDown() {
 		timer = null;
 		assertNull(timer);
 	}

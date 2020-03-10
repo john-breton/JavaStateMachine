@@ -1,6 +1,3 @@
-/**
- * 
- */
 package floorSubsystem;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayOutputStream;
@@ -21,18 +18,16 @@ class FloorTest {
 	private static final int expectedRequests = 5;
 	
 	/**
-	 * @throws java.lang.Exception
 	 */
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		floor = new Floor();
 	}
 	
 	/**
-	 * @throws java.lang.Exception
 	 */
 	@AfterEach
-	void tearDown() throws Exception {
+	void tearDown() {
 		floor = null;
 		assertNull(floor);
 	}

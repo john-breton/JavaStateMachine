@@ -30,7 +30,7 @@ class ElevatorTest {
 	ElevatorSubsystem elevatorSubSystem;
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		elevatorSubSystem = new ElevatorSubsystem();
 	}
 
@@ -45,17 +45,17 @@ class ElevatorTest {
 	}
 
 	/**
-	 * @throws java.lang.Exception
 	 */
 	@AfterEach
-	void tearDown() throws Exception {
+	void tearDown() {
 	}
 
 
 	@Test
 	void movementTest() {
-		Thread elevatorThread = new Thread(elevatorSubSystem. new Elevator());
-		elevatorThread.start();
+		ElevatorSubsystem elevatorSubSystem = new ElevatorSubsystem();
+		Thread elevatorSubSystemThread = new Thread(elevatorSubSystem);
+		elevatorSubSystemThread.start();
 		
 		RequestData data = new RequestData("14:05:55.0 1 Up 4");
 		byte[] bytes = data.toBytes();

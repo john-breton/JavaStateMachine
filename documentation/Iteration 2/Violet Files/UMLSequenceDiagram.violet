@@ -2166,7 +2166,7 @@ moving</string>
   <void method="connect">
    <object class="com.horstmann.violet.CallEdge">
     <void property="middleLabel">
-     <string>increment the data recived count</string>
+     <string>increment the data received count</string>
     </void>
    </object>
    <object idref="CallNode36"/>

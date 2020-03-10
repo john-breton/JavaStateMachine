@@ -1,6 +1,3 @@
-/**
- * 
- */
 package floorSubsystem;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,18 +14,16 @@ class RequestDataTest {
 	RequestData requestData;
 
 	/**
-	 * @throws java.lang.Exception
 	 */
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		requestData = new RequestData("14:05:15.0",3,true,1);
 		}
 
 	/**
-	 * @throws java.lang.Exception
 	 */
 	@AfterEach
-	void tearDown() throws Exception {
+	void tearDown() {
 		requestData = null;
 		assertNull(requestData);
 				

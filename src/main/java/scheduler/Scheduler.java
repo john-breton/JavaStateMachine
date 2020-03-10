@@ -8,8 +8,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.*;
 
-import floorSubsystem.RequestData;
-
 /**
  * The Scheduler class in one the three subsystems of the elevator program. The
  * scheduler is responsible for scheduling requests to ensure maximum throughput
@@ -32,7 +30,7 @@ public class Scheduler implements Runnable {
      * @version Iteration 3 - March 6th, 2020
      */
     private enum State {
-        IDLE, SCHEDULING;
+        IDLE, SCHEDULING
     }
 
     /**
@@ -57,7 +55,9 @@ public class Scheduler implements Runnable {
     /**
      * Packets used for sending and receiving data via UDP communication.
      */
-    private DatagramPacket sendPacket, receiveFloorPacket, receiveElevatorPacket, receiveElevatorInfo;
+    private DatagramPacket sendPacket;
+    private DatagramPacket receiveFloorPacket;
+    private DatagramPacket receiveElevatorPacket;
 
     /**
      * Sockets used for sending and receiving data via UDP communication.
@@ -156,10 +156,9 @@ public class Scheduler implements Runnable {
      * to decide which Elevator should receive the packet.
      */
     private void sendPacketToElevator() {
-        System.out.println("-> Sending elvator number");
+        System.out.println("-> Sending elevator number");
         printPacketInfo(true, 3);
         try {
-
             // Send the packet
             sendSocket.send(sendPacket);
         } catch (IOException e) {
@@ -247,7 +246,7 @@ public class Scheduler implements Runnable {
             sendSocket.send(sendPacket);
             // Wait for a reply
             byte[] longMessage = new byte[1000];
-            receiveElevatorInfo = new DatagramPacket(longMessage, longMessage.length, InetAddress.getLocalHost(),
+            DatagramPacket receiveElevatorInfo = new DatagramPacket(longMessage, longMessage.length, InetAddress.getLocalHost(),
                     ELEVATOR_REPLY_PORT);
             elevatorSocketReplier.receive(receiveElevatorInfo);
             return receiveElevatorInfo;
@@ -282,7 +281,7 @@ public class Scheduler implements Runnable {
         String[] elevatorStatuses = new String(elevatorInfo.getData()).split("-");
         int numElevators = elevatorStatuses.length - 1;
 
-        boolean requestDirection = requestInfo[2].equals("Up") ? true : false;
+        boolean requestDirection = requestInfo[2].equals("Up");
         int startFloor = Integer.parseInt(requestInfo[1]);
         int destinationFloor = Integer.parseInt(requestInfo[3]);
 
@@ -304,7 +303,7 @@ public class Scheduler implements Runnable {
                 }
             }
             int min = elevatorScores.indexOf(Collections.min(elevatorScores));
-            String newData = String.valueOf(min) + "|0|" + nextReq;
+            String newData = min + "|0|" + nextReq;
 
             createPacket(newData.getBytes());
         } else {
@@ -313,23 +312,23 @@ public class Scheduler implements Runnable {
             for (String s : elevatorStatuses) {
                 if (i < numElevators) {
                     String[] temp = s.split("\\|");
-                    if (requestDirection && temp[2].equals("MOVINGUP")
-                            && (destinationFloor < Integer.parseInt(temp[3]))) {
+                    if (requestDirection && temp[0].equals("MOVINGUP")
+                            && (destinationFloor < Integer.parseInt(temp[2]))) {
                         elevatorScores.add(i, 1);
                         location = 0;
-                    } else if (requestDirection && temp[2].equals("MOVINGDOWN")
-                            && (destinationFloor > Integer.parseInt(temp[3]))) {
+                    } else if (requestDirection && temp[0].equals("MOVINGDOWN")
+                            && (destinationFloor > Integer.parseInt(temp[2]))) {
                         elevatorScores.add(i, 1);
                         location = 0;
                     } else {
-                        elevatorScores.add(i, Math.abs(startFloor - Integer.parseInt(temp[3])));
-                        location = 1;
+                        elevatorScores.add(i, Math.abs(startFloor - Integer.parseInt(temp[2])));
+                        location = 0;
                     }
                     i++;
                 }
             }
             int min = elevatorScores.indexOf(Collections.min(elevatorScores));
-            String newData = String.valueOf(min) + "|" + String.valueOf(location) + "|" + nextReq;
+            String newData = min + "|" + location + "|" + nextReq;
             createPacket(newData.getBytes());
         }
 

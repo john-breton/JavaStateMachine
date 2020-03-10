@@ -22,7 +22,7 @@
 + getState(): State
 - move(floor: int)
 - moveFloors(): boolean
-+ haveWork(): booelan
++ haveWork(): boolean
 + toString(): String
 - doWork()
 + run()</string>
@@ -391,12 +391,12 @@
     </void>
     <void property="methods">
      <void property="text">
-      <string>+ElevatorSubsytem()
+      <string>+ElevatorSubsystem()
 -createPacket(message:byte[], status:boolean)
 -sendPacket()
 -printPacketInfo(sending:boolean)&apos;
 -isStatusRequest(data:byte[]):boolean
--parseInforFromScheduler(data:byte[])
+-parseInfoFromScheduler(data:byte[])
 -receivePacketFromScheduler()
 +run()
 +&lt;u&gt;main(args:String[])&lt;/u&gt;</string>

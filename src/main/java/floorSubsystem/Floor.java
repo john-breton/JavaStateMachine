@@ -67,8 +67,7 @@ public class Floor implements Runnable {
 
 	/**
 	 * Default constructor to initialize the class variables
-	 * 
-	 * @param scheduler The scheduler the Floor will communicate with.
+	 *
 	 */
 	public Floor() {
 		requestData = new ArrayDeque<>();
@@ -112,7 +111,7 @@ public class Floor implements Runnable {
 	 * for timing purposes.
 	 */
 	private void convertStartTime() {
-		String[] temp = startTime.split(":|\\.");
+		String[] temp = startTime.split("[:.]");
 		startHour = Integer.parseInt(temp[0]);
 		startMinute = Integer.parseInt(temp[1]);
 		startSecond = Integer.parseInt(temp[2]);
@@ -173,11 +172,10 @@ public class Floor implements Runnable {
 	
 	/**
 	 * Method to create, print and send a packet to the scheduler.
-	 * @throws InterruptedException
 	 */
-	private void sendRequestPacket() throws InterruptedException {
+	private void sendRequestPacket() {
 		if (!requestData.isEmpty()) {
-			String time[] = requestData.peek().getTime().split(":|\\.");
+			String[] time = requestData.peek().getTime().split("[:.]");
 			// Wait until the correct amount of time has passed before sending the next
 			// request (busy waiting loop).
 			while (!timer.itsTime(Integer.parseInt(time[0]) - startHour,
@@ -209,13 +207,9 @@ public class Floor implements Runnable {
 		// TODO: NEED TO CHANGE THE CONDITION LATER 
 		// AS THE FLOOR WILL NOT RECEIVE REQUESTS ANYMORE
 		while (dataReceived < totalRequests) {
-			try {
-				// Keep sending and receiving packets to/from the scheduler.
-				this.sendRequestPacket();
-				dataReceived++;
-			} catch (InterruptedException e) {
-				System.exit(0);
-			}
+			// Keep sending and receiving packets to/from the scheduler.
+			this.sendRequestPacket();
+			dataReceived++;
 		}
 	}
 	

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package floorSubsystem;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,18 +12,16 @@ import org.junit.jupiter.api.Test;
 class ParserTest {
 	Parser parser;
 	/**
-	 * @throws java.lang.Exception
 	 */
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		parser = new Parser();
 	}
 
 	/**
-	 * @throws java.lang.Exception
 	 */
 	@AfterEach
-	void tearDown() throws Exception {
+	void tearDown() {
 		parser = null;
 		assertNull(parser);
 	}

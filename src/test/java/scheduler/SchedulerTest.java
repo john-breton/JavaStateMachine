@@ -25,10 +25,9 @@ class SchedulerTest {
 	PrintStream originalOut = System.out;
 
 	/**
-	 * @throws java.lang.Exception
 	 */
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		scheduler = new Scheduler();
 	}
 
@@ -43,10 +42,9 @@ class SchedulerTest {
 	}
 
 	/**
-	 * @throws java.lang.Exception
 	 */
 	@AfterEach
-	void tearDown() throws Exception {
+	void tearDown() {
 		scheduler = null;
 		assertNull(scheduler);
 	}
@@ -57,9 +55,9 @@ class SchedulerTest {
 		floorToScheduler.setName("F2S");
 		floorToScheduler.start();
 		
-		Thread elvatorToScheduler = new Thread(scheduler);
-		elvatorToScheduler.setName("E2S");
-		elvatorToScheduler.start();
+		Thread elevatorToScheduler = new Thread(scheduler);
+		elevatorToScheduler.setName("E2S");
+		elevatorToScheduler.start();
 		
 		RequestData data = new RequestData("14:05:55.0 1 Up 4");
 		byte[] bytes = data.toBytes();

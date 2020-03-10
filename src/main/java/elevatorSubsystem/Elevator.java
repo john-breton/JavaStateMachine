@@ -18,7 +18,7 @@ import floorSubsystem.RequestData;
 public class Elevator implements Runnable {
 
     private enum State {
-        IDLE, MOVINGUP, MOVINGDOWN, ARRIVED;
+        IDLE, MOVINGUP, MOVINGDOWN, ARRIVED
     }
 
     private State state;
@@ -36,22 +36,21 @@ public class Elevator implements Runnable {
     /**
      * Experimental value for iteration 2. Value taken from iteration 0 calculations
      * Time it takes to move 1 floor at full acceleration
-     * 
      */
     private static final double TIME_PER_FLOOR = 1;
 
     private static final int DATA_SIZE = 26;
-    
-    private int currentFloor; 
+
+    private int currentFloor;
 
     /**
      * Construct a new Elevator.
      */
     public Elevator() {
         state = State.IDLE;
-        currentFloor = 0;
+        currentFloor = 1;
         workQueue = new ArrayList<RequestData>();
-        
+
         // To test
         // Add data in the work queue
         // workQueue.add(new RequestData("14:05:15.0 2 Up 4"));
@@ -60,36 +59,34 @@ public class Elevator implements Runnable {
 
     /**
      * Method to add a request to the elevator queue.
-     * 
+     *
      * @param requestData
      */
     public synchronized void addToQueue(RequestData requestData, int index) {
         workQueue.add(index, requestData);
         notifyAll();
     }
-    
+
     public String getStatus() {
-    	String status;
-    	status = state.toString() + "|";
-    	status += currentFloor + "|";
-    	
-    	if(currentRequest != null) {
-    		status += currentRequest.getDestinationFloor() + "|";
-    	}
-    	
-    	else {
-    		status += "0|"; 
-    	}
-    	
-    	for (RequestData data: workQueue) {
-    		status += data.getSimpleForm();
-    	}
-    	
-    	if (workQueue.isEmpty()) {
-    		status += "empty";
-    	}
-    	
-    	return status;
+        StringBuilder status;
+        status = new StringBuilder(state.toString() + "|");
+        status.append(currentFloor).append("|");
+
+        if (currentRequest != null) {
+            status.append(currentRequest.getDestinationFloor()).append("|");
+        } else {
+            status.append("0|");
+        }
+
+        for (RequestData data : workQueue) {
+            status.append(data.getSimpleForm());
+        }
+
+        if (workQueue.isEmpty()) {
+            status.append("empty");
+        }
+
+        return status.toString();
     }
 
     /**
@@ -107,14 +104,14 @@ public class Elevator implements Runnable {
             state = State.ARRIVED;
         } else
             state = State.MOVINGDOWN;
-        
-        System.out.println("State has been updated to: " + getState());
+
+        System.out.println("State has been updated to: " + getState() +"for Elevator " + Thread.currentThread().getName());
 
     }
 
     /**
      * Get the current state of the elevator.
-     * 
+     *
      * @return The current state of the elevator.
      */
     public State getState() {
@@ -123,12 +120,12 @@ public class Elevator implements Runnable {
 
     /**
      * Method to move the elevator to a particular floor
-     * 
+     *
      * @param floor
      */
     private void move(int floor) {
         try {
-            System.out.println("Elevator: Floor " + floor);
+            System.out.println("Elevator " + Thread.currentThread().getName() + ": Floor " + floor);
 
             // Wait while the elevator is moving in between floors
             Thread.sleep((long) (TIME_PER_FLOOR * 1000));
@@ -140,7 +137,7 @@ public class Elevator implements Runnable {
 
     /**
      * Method to move floors
-     * 
+     *
      * @return
      */
     private boolean moveFloors() {
@@ -151,7 +148,7 @@ public class Elevator implements Runnable {
 
         // If the elevator is moving up
         if (currentFloor < destinationFloor) {
-            
+
             int count = currentFloor;
             goToNextState(true);
             while (count <= destinationFloor) {
@@ -181,19 +178,16 @@ public class Elevator implements Runnable {
         }
     }
 
-    public synchronized boolean haveWork() throws InterruptedException {
-    	while (workQueue.isEmpty()) {
-    		wait();
-    	}
-    	
-    	return true;
+    public synchronized void haveWork() throws InterruptedException {
+        while (workQueue.isEmpty())
+            wait();
     }
-    
+
     /**
      * Return the current movement of the Elevator, as a String.
-     * 
+     *
      * @return The string representation of the movement the Elevator is currently
-     *         completing.
+     * completing.
      */
     @Override
     public String toString() {
@@ -204,19 +198,18 @@ public class Elevator implements Runnable {
 
     private void doWork() {
         try {
-			if (haveWork()) {
-			    currentRequest = workQueue.remove(0);
-			    System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
-			    System.out.println(toString());
-			    if (this.moveFloors()) {
-			        System.out.println("-> Elevator " + Thread.currentThread().getName() + " has moved to the floor " + currentRequest.getDestinationFloor() + "\n");
-			        goToNextState(true);
-			    }
-			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            haveWork();
+            currentRequest = workQueue.remove(0);
+            System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
+            System.out.println(toString());
+            if (this.moveFloors()) {
+                System.out.println("-> Elevator " + Thread.currentThread().getName() + " has moved to the floor " + currentRequest.getDestinationFloor() + "\n");
+                goToNextState(true);
+            }
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     /**
