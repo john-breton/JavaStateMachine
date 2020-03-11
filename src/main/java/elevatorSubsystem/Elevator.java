@@ -104,9 +104,11 @@ public class Elevator implements Runnable {
             state = State.ARRIVED;
         } else
             state = State.MOVINGDOWN;
-
-        System.out.println("State has been updated to: " + getState() +"for Elevator " + Thread.currentThread().getName());
-
+        if (getState() == State.IDLE) {
+            System.out.println("Elevator " + Thread.currentThread().getName() + " state has been updated to: " + getState() + "\n");
+        } else {
+            System.out.println("Elevator " + Thread.currentThread().getName() + " state has been updated to: " + getState());
+        }
     }
 
     /**
@@ -156,6 +158,12 @@ public class Elevator implements Runnable {
                 count++;
             }
             goToNextState(true);
+            // Simulate the doors opening and closing
+            try {
+                Thread.currentThread().sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return true;
         }
 
@@ -168,6 +176,12 @@ public class Elevator implements Runnable {
                 count--;
             }
             goToNextState(true);
+            // Simulate the doors opening and closing
+            try {
+                Thread.currentThread().sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return true;
         }
 
@@ -203,7 +217,7 @@ public class Elevator implements Runnable {
             System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
             System.out.println(toString());
             if (this.moveFloors()) {
-                System.out.println("-> Elevator " + Thread.currentThread().getName() + " has moved to the floor " + currentRequest.getDestinationFloor() + "\n");
+                System.out.println("-> Elevator " + Thread.currentThread().getName() + " has moved to the floor " + currentRequest.getDestinationFloor());
                 goToNextState(true);
             }
         } catch (InterruptedException e) {

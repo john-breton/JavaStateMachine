@@ -15,7 +15,7 @@ class FloorTest {
 	private Floor floor;
 	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	private final PrintStream originalOut = System.out;
-	private static final int expectedRequests = 5;
+	private static final int expectedRequests = 6;
 	
 	/**
 	 */

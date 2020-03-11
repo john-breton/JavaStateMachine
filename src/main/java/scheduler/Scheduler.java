@@ -12,12 +12,12 @@ import java.util.*;
  * The Scheduler class in one the three subsystems of the elevator program. The
  * scheduler is responsible for scheduling requests to ensure maximum throughput
  * and minimize waiting time.
- * 
+ * <p>
  * For Iteration 3: The scheduler receives request from the FloorSubsystem and
  * requests the states of all elevators from the ElevatorSubsystem. Based on the
  * information returned, the scheduler will send information to the
  * ElevatorSubsystem that can be used to insert the .
- * 
+ *
  * @author John Breton, Shoaib Khan
  * @version Iteration 3 - March 6th, 2020
  */
@@ -25,7 +25,7 @@ public class Scheduler implements Runnable {
 
     /**
      * An enumeration representing the possible states of the Scheduler.
-     * 
+     *
      * @author John Breton
      * @version Iteration 3 - March 6th, 2020
      */
@@ -94,7 +94,7 @@ public class Scheduler implements Runnable {
 
     /**
      * Get the current state of the scheduler.
-     * 
+     *
      * @return The current state of the scheduler.
      */
     private State getState() {
@@ -104,7 +104,7 @@ public class Scheduler implements Runnable {
     /**
      * Receive a DatagramPacket from either the ElevatorSubsystem or the
      * FloorSubsystem.
-     * 
+     *
      * @param fromFloor True if the DatagramPacket is originating from the
      *                  FloorSubsystem, false otherwise.
      */
@@ -115,9 +115,7 @@ public class Scheduler implements Runnable {
             if (fromFloor) {
                 receiveFloorPacket = new DatagramPacket(request, request.length);
                 floorSocketReceiver.receive(receiveFloorPacket);
-            }
-
-            else {
+            } else {
                 receiveElevatorPacket = new DatagramPacket(request, request.length);
                 elevatorSocketReceiver.receive(receiveElevatorPacket);
             }
@@ -133,7 +131,7 @@ public class Scheduler implements Runnable {
 
     /**
      * Routine to create a DatagramPacket that will be sent.
-     * 
+     *
      * @param message The byte[] data the DatagramPacket will contain.
      */
     private void createPacket(byte[] message) {
@@ -172,7 +170,7 @@ public class Scheduler implements Runnable {
 
     /**
      * Print the information contained within a particular DatagramPacket.
-     * 
+     *
      * @param sending   True if we are sending the DatagramPacket, false if we
      *                  received the DatagramPacket.
      * @param fromWhere 1 if the DatagramPacket originated from the
@@ -185,14 +183,14 @@ public class Scheduler implements Runnable {
         String title = sending ? "sending" : "receiving";
         DatagramPacket packetInfo = null;
         switch (fromWhere) {
-        case 1:
-            packetInfo = receiveElevatorPacket;
-            break;
-        case 2:
-            packetInfo = receiveFloorPacket;
-            break;
-        case 3:
-            packetInfo = sendPacket;
+            case 1:
+                packetInfo = receiveElevatorPacket;
+                break;
+            case 2:
+                packetInfo = receiveFloorPacket;
+                break;
+            case 3:
+                packetInfo = sendPacket;
         }
         System.out.println(symbol + " Scheduler: " + title + " Packet");
         System.out.println(symbol + " Address: " + packetInfo.getAddress());
@@ -206,7 +204,7 @@ public class Scheduler implements Runnable {
 
     /**
      * Add a request to the work queue for the scheduler.
-     * 
+     *
      * @param work The request to be added.
      */
     private synchronized void addToWorkQueue(DatagramPacket work) {
@@ -216,7 +214,7 @@ public class Scheduler implements Runnable {
 
     /**
      * Check to see if there are any requests that must be scheduled.
-     * 
+     *
      * @return The next request to be scheduled, as a DatagramPacket.
      */
     private synchronized DatagramPacket checkWork() {
@@ -232,7 +230,7 @@ public class Scheduler implements Runnable {
 
     /**
      * Sends a request for status to the ElevatorSubsystem.
-     * 
+     *
      * @return A DatagramPacket containing the information for all Elevators.
      */
     private DatagramPacket sendStatusRequest() {
@@ -262,75 +260,85 @@ public class Scheduler implements Runnable {
 
     /**
      * Schedule the request by determining the best elevator to send the request to.
-     * 
+     *
      * @param work         The current request that is being scheduled.
      * @param elevatorInfo The statuses of all the elevators.
      * @return A DatagramPacket that contains the request, along with the
-     *         information as to which Elevator the request will be added to, and if
-     *         it should do at the front of the back of the workQueue.
+     * information as to which Elevator the request will be added to, and if
+     * it should do at the front of the back of the workQueue.
      */
     private void schedule(DatagramPacket work, DatagramPacket elevatorInfo) {
         // Progress the state of the Scheduler to indicate that we are currently
         // scheduling a request.
         goToNextState();
 
+        // Keep track of the assigned elevator scores.
         ArrayList<Integer> elevatorScores = new ArrayList<>();
 
+        // Prepare strings that will be used for scheduling.
         String nextReq = new String(work.getData());
         String[] requestInfo = new String(work.getData()).split(" ");
         String[] elevatorStatuses = new String(elevatorInfo.getData()).split("-");
         int numElevators = elevatorStatuses.length - 1;
 
-        boolean requestDirection = requestInfo[2].equals("Up");
+        // Parse necessary info from the current request that is being scheduled.
         int startFloor = Integer.parseInt(requestInfo[1]);
         int destinationFloor = Integer.parseInt(requestInfo[3]);
 
-        int numIdle = 0;
-
+        // Main schedule logic
+        int i = 0;
+        int location = 1;
         for (String s : elevatorStatuses) {
-            String[] temp = s.split("\\|");
-            if (temp[0].trim().equals("IDLE"))
-                numIdle++;
-        }
-
-        if (numIdle == numElevators) {
-            int i = 0;
-            for (String s : elevatorStatuses) {
-                if (i < numElevators) {
-                    String[] temp = s.split("\\|");
-                    elevatorScores.add(i, Math.abs(startFloor - Integer.parseInt(temp[1])));
-                    i++;
+            if (i < numElevators) {
+                String[] temp = s.split("\\|");
+                // Moving up and the next request is on the way to the current destination floor of the elevator and
+                // there is time to stop (at least one floor difference between the current floor of the elevator and
+                // the start of the next request).
+                if (temp[0].equals("MOVINGUP") && (Integer.parseInt(temp[2])) != 0 && (Integer.parseInt(temp[1]) != 0)
+                        && (destinationFloor <= Integer.parseInt(temp[2])) && (startFloor >= (Integer.parseInt(temp[1]) + 1))) {
+                    elevatorScores.add(i, 1);
+                    location = 0;
                 }
-            }
-            int min = elevatorScores.indexOf(Collections.min(elevatorScores));
-            String newData = min + "|0|" + nextReq;
-
-            createPacket(newData.getBytes());
-        } else {
-            int i = 0;
-            int location = 1;
-            for (String s : elevatorStatuses) {
-                if (i < numElevators) {
-                    String[] temp = s.split("\\|");
-                    if (requestDirection && temp[0].equals("MOVINGUP")
-                            && (destinationFloor < Integer.parseInt(temp[2]))) {
-                        elevatorScores.add(i, 1);
-                        location = 0;
-                    } else if (requestDirection && temp[0].equals("MOVINGDOWN")
-                            && (destinationFloor > Integer.parseInt(temp[2]))) {
-                        elevatorScores.add(i, 1);
-                        location = 0;
-                    } else {
-                        elevatorScores.add(i, Math.abs(startFloor - Integer.parseInt(temp[2])));
-                        location = 0;
+                // Moving down and the next request is on the way to the current destination floor of the elevator and
+                // there is time to stop (at least one floor difference between the current floor of the elevator and
+                // the start of the next request).
+                else if (temp[0].equals("MOVINGDOWN") && (Integer.parseInt(temp[2])) != 0 && (Integer.parseInt(temp[1]) != 0)
+                        && (destinationFloor >= Integer.parseInt(temp[2])) && (startFloor <= (Integer.parseInt(temp[1]) - 1))) {
+                    elevatorScores.add(i, 1);
+                    location = 0;
+                }
+                // The elevator is not moving (easiest case).
+                else if (temp[0].trim().equals("IDLE") || temp[0].trim().equals("ARRIVED")) {
+                    elevatorScores.add(i, Math.abs(startFloor - Integer.parseInt(temp[2])));
+                    location = 0;
+                    // Calculate the distance between the destination floor and the start of the
+                    // next request and assign a score based on that metric.
+                } else {
+                    elevatorScores.add(i, Math.abs(destinationFloor - Integer.parseInt(temp[1])));
+                    if (startFloor == Integer.parseInt(temp[2]))
+                        location = 1;
+                    else {
+                        location = -1;
                     }
-                    i++;
                 }
+
+                // This gets tricky. If the score is above 3, it is considered a bad score. Any bad score
+                // will be reevaluated with the next available RequestData the elevator currently has (if it exists).
+                // This is to try to maximize the throughput of the elevators to ensure they finish their jobs as
+                // quickly as possible.
+                if (elevatorScores.get(i) > 3 && !temp[3].equals("empty")) {
+                    for (int j = 3; j < temp.length; j++) {
+                        // Will be implemented in iteration 4.
+                    }
+                }
+
+                i++;
             }
-            int min = elevatorScores.indexOf(Collections.min(elevatorScores));
-            String newData = min + "|" + location + "|" + nextReq;
-            createPacket(newData.getBytes());
         }
+
+        int min = elevatorScores.indexOf(Collections.min(elevatorScores));
+        String newData = min + "|" + location + "|" + nextReq;
+        createPacket(newData.getBytes());
 
         // We are done scheduling, so the Scheduler state should indicate that it is no
         // longer scheduling.
