@@ -14,7 +14,7 @@ class FloorTest {
 	
 	private Floor floor;
 	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-	private final PrintStream originalOut = System.out;
+	// --Commented out by Inspection (2020-03-11 10:42 a.m.):private final PrintStream originalOut = System.out;
 	private static final int expectedRequests = 6;
 	
 	/**

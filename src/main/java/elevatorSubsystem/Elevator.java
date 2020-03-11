@@ -49,7 +49,7 @@ public class Elevator implements Runnable {
     public Elevator() {
         state = State.IDLE;
         currentFloor = 1;
-        workQueue = new ArrayList<RequestData>();
+        workQueue = new ArrayList<>();
 
         // To test
         // Add data in the work queue
@@ -160,7 +160,7 @@ public class Elevator implements Runnable {
             goToNextState(true);
             // Simulate the doors opening and closing
             try {
-                Thread.currentThread().sleep(1000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -178,7 +178,7 @@ public class Elevator implements Runnable {
             goToNextState(true);
             // Simulate the doors opening and closing
             try {
-                Thread.currentThread().sleep(1000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

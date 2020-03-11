@@ -193,7 +193,7 @@ public class Scheduler implements Runnable {
                 packetInfo = sendPacket;
         }
         System.out.println(symbol + " Scheduler: " + title + " Packet");
-        System.out.println(symbol + " Address: " + packetInfo.getAddress());
+        System.out.println(symbol + " Address: " + Objects.requireNonNull(packetInfo).getAddress());
         System.out.println(symbol + " Port: " + packetInfo.getPort());
         System.out.print(symbol + " Data (byte): ");
         for (byte b : packetInfo.getData())

@@ -69,14 +69,12 @@ class SchedulerTest {
 			socket.close();
 			System.out.println(scheduler.toString());
 
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		assertNotNull(outContent.toString());
+
+        assertNotNull(outContent.toString());
 	}
 }

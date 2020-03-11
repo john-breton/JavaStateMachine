@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import floorSubsystem.RequestData;
 
 /**
  * Tests for the Elevator class.
@@ -32,6 +31,8 @@ class ElevatorTest {
 	@BeforeEach
 	void setUp() {
 		elevatorSubSystem = new ElevatorSubsystem();
+		Thread elevatorSubSystemThread = new Thread(elevatorSubSystem);
+		elevatorSubSystemThread.start();
 	}
 
 	@BeforeEach
@@ -53,26 +54,22 @@ class ElevatorTest {
 
 	@Test
 	void movementTest() {
-		ElevatorSubsystem elevatorSubSystem = new ElevatorSubsystem();
-		Thread elevatorSubSystemThread = new Thread(elevatorSubSystem);
-		elevatorSubSystemThread.start();
-		
-		RequestData data = new RequestData("14:05:55.0 1 Up 4");
-		byte[] bytes = data.toBytes();
+		byte[] bytes = "Status".getBytes();
+		byte[] data = new byte[100];
 		
 		try {
 			DatagramPacket sendPacket = new DatagramPacket(bytes, bytes.length, InetAddress.getLocalHost(), 60);
-			DatagramSocket socket = new DatagramSocket();
-			socket.send(sendPacket);
-			socket.close();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			DatagramPacket receivePacket = new DatagramPacket(data, data.length, InetAddress.getLocalHost(), 61);
+			DatagramSocket sendSocket = new DatagramSocket();
+			sendSocket.send(sendPacket);
+			sendSocket.receive(receivePacket);
+			sendSocket.close();
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-			
+
 
 		// Ensure that data is being printed to the console now that the Elevator has
 		// received a request to move.

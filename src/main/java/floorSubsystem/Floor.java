@@ -94,7 +94,7 @@ public class Floor implements Runnable {
 	public int fetchRequests() {
 		Parser parser = new Parser();
 		requestData = parser.getRequestFromFile();
-		startTime = requestData.peek().getTime();
+		startTime = Objects.requireNonNull(requestData.peek()).getTime();
 		return requestData.size();
 	}
 

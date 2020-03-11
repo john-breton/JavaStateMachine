@@ -33,7 +33,7 @@ public class ElevatorSubsystem implements Runnable {
     private static State state;
 
     public ElevatorSubsystem() {
-        elevators = new ArrayList<Elevator>();
+        elevators = new ArrayList<>();
         Elevator elevator1 = new Elevator();
         Elevator elevator2 = new Elevator();
         Thread elevatorThread1 = new Thread(elevator1);
