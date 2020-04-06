@@ -142,12 +142,14 @@ public class Elevator implements Runnable {
      *
      * @return
      */
-    private boolean moveFloors() {
+    public boolean moveFloors(int currentFloor, int destinationFloor) {
 
-        // Get the current and the destination floors
-        int currentFloor = currentRequest.getCurrentFloor();
-        int destinationFloor = currentRequest.getDestinationFloor();
-
+        if (this.currentFloor != currentFloor) {
+//        	goToNextState(this.currentFloor < currentFloor);
+        	this.moveFloors(this.currentFloor, currentFloor - 1);	
+        	goToNextState(true);
+        }
+        
         // If the elevator is moving up
         if (currentFloor < destinationFloor) {
 
@@ -216,7 +218,7 @@ public class Elevator implements Runnable {
             currentRequest = workQueue.remove(0);
             System.out.println("Elevator received information from Scheduler: " + currentRequest.toString());
             System.out.println(toString());
-            if (this.moveFloors()) {
+            if (this.moveFloors(currentRequest.getCurrentFloor(), currentRequest.getDestinationFloor())) {
                 System.out.println("-> Elevator " + Thread.currentThread().getName() + " has moved to the floor " + currentRequest.getDestinationFloor());
                 goToNextState(true);
             }
