@@ -17,9 +17,9 @@ This GitHub repository is used for the development of a Java based real-time ele
 
 1. From your terminal, run:
    ```
-   git clone https://github.com/john-breton/SYSC-3303
+   git clone https://github.com/john-breton/JavaStateMachine
    ```
-   This will create a folder called SYSC-3303.
+   This will create a folder called JavaStateMachine.
 
 ##### Additional Tools
 
