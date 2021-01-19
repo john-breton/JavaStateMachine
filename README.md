@@ -1,5 +1,5 @@
 # JavaStateMachine
-Created for the a course at Carleton University. Winter 2020.
+Created for a course at Carleton University. Winter 2020.
 
 ## Real-Time Elevator Simulator
 
